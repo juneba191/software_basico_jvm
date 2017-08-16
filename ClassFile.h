@@ -30,6 +30,7 @@ public:
     uint16_t	attributes_count;
     //AttributeInfo* attributes;
 
+
     ClassFile(char* nome);
     void leClasse();
 
