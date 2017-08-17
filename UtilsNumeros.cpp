@@ -16,6 +16,7 @@ int16_t UtilsNumeros::swap_int16( int16_t val )
     return (val << 8) | ((val >> 8) & 0xFF);
 }
 
+
 //! Byte swap unsigned int
 uint32_t UtilsNumeros::swap_uint32( uint32_t val )
 {

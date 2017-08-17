@@ -15,6 +15,7 @@
 
 
 
+
 #endif //SOFTWAREBASICOJVM_DEBUG_H
 
 #ifndef _COLORS_
