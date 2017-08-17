@@ -2,11 +2,14 @@
 // Created by wagner on 15/08/17.
 //
 
+
+
 #ifndef SOFTWAREBASICOJVM_CLASSFILE_H
 #define SOFTWAREBASICOJVM_CLASSFILE_H
 #include <stdint.h>
 #include <fstream>
 #include <iostream>
+
 
 
 class ClassFile {
@@ -29,10 +32,18 @@ public:
     //MethodInfo*	methods;
     uint16_t	attributes_count;
     //AttributeInfo* attributes;
-
-
-    ClassFile(char* nome);
+    /*trata a classe totalmente.*/
     void leClasse();
+    /*Carrega o caminho do  arquivo para a Classe simplesmente.*/
+    ClassFile(char* nome);
+private:
+    /*leUint32*/
+    uint32_t readU32();
+    uint16_t readU16();
+    
+
+
+
 
 
 };

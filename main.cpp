@@ -1,19 +1,20 @@
+
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
 #include "ClassFile.h"
 #include <string.h>
+#include "Debug.h"
+
 
 using namespace std;
-
 
 
 
 int main() {
 
     // Lê o arquivo.
-    ClassFile classFile("Test.class");
-
+    ClassFile classFile("HelloWorld.class");
     classFile.leClasse();
 
 
