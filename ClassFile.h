@@ -169,6 +169,8 @@ private:
     u1 readU8();
     void readConstantPool();
     CONSTANT_Class_info getConstantClassInfo();
+    CONSTANT_Methodref_info getConstantMethodRefInfo();
+    CONSTANT_Fieldref_info getConstantFieldRefInfo();
 };
 
 

@@ -4,11 +4,11 @@
 #include "ClassFile.h"
 #include "UtilsNumeros.h"
 #include "Debug.h"
-
+#include "cstdio"
 
 
 ClassFile::ClassFile(char* nome) {
-    this->arquivo.open("Test.class",std::fstream::in | std::fstream::binary);
+    this->arquivo.open("HelloWorld.class",std::fstream::in | std::fstream::binary);
     this->nome = std::string(nome);
     if (!this->arquivo.is_open())
     {
@@ -58,36 +58,50 @@ void ClassFile::readConstantPool() {
     u2 tamPool = this->cp_size - 1;
     this->constant_pool= (cp_info*) malloc(sizeof(cp_info) * tamPool);
 
-    for(u2 i = 0 ; i < tamPool ;i++)
+    printf("\n=====> INICIO READ CONSTANT POOL <<=======\n\n");
+    for(u2 i = 0 ; i < 3 ;i++)
     {
         uint8_t tag = readU8();
         //Debug("Tag lida["<< i <<"] =" <<std::dec << tag << "\n");
-        std::cout << tag;
+        //std::cout << tag;
         this->constant_pool[i].tag = tag;
 
-        tag = this->constant_pool[i].tag;
-
-        std::cout << tag;
-
-
+        Debug(<<"valor lido na tag["<<i<<"] = "<< std::hex  << std::uppercase << static_cast<int>(tag)<< std::dec << "\n");
         switch(tag)
         {
             case CONSTANT_Class:
+                Debug("entrou no case [CONSTANT CLASS]\n");
                 constant_pool[i].info.class_info = getConstantClassInfo();
-            break;
-            case CONSTANT_Fieldref:
-                break;
 
+                break;
+            case CONSTANT_Fieldref:
+                Debug("entrou no case [CONSTANT_Fieldref] \n");
+                constant_pool[i].info.fieldref_info = getConstantFieldRefInfo();
+
+                break;
+            case CONSTANT_Methodref:
+                Debug("entrou no case [MethodRef]\n");
+                constant_pool[i].info.methodref_info = getConstantMethodRefInfo();
+
+                break;
             default:
                 Debug("Foi encontrada uma tag invalida no arquivo [" << this->nome << "]\n");
                 exit(5);
         }
-
-
-
+        printf("\n");
     }
     return;
 }
+
+CONSTANT_Fieldref_info ClassFile::getConstantFieldRefInfo() {
+    CONSTANT_Fieldref_info result;
+    result.class_index = readU16();
+    result.name_and_type_index = readU16();
+
+    return result;
+}
+
+
 CONSTANT_Class_info ClassFile::getConstantClassInfo() {
     CONSTANT_Class_info result;
     result.name_index = readU16();
@@ -95,11 +109,21 @@ CONSTANT_Class_info ClassFile::getConstantClassInfo() {
     return result;
 }
 
+CONSTANT_Methodref_info ClassFile::getConstantMethodRefInfo() {
+    CONSTANT_Methodref_info result;
+
+    result.class_index = readU16();
+    result.name_and_type_index = readU16();
+
+    return result;
+
+}
+
 uint8_t ClassFile::readU8() {
     uint8_t inteiro;
     if (!arquivo.is_open()) Debug("perdeu a referencia no readu8");
     arquivo.read((char*)&inteiro,1);
-
+    printf("\tu8: hexadecimal lido = 0x%04x \n",(int)inteiro);
     return (uint8_t)inteiro;
 }
 
@@ -107,11 +131,13 @@ uint32_t ClassFile::readU32 () {
     uint32_t inteiro;
     arquivo.read( (char*)&(inteiro), 4);
     inteiro = UtilsNumeros::swap_uint32(inteiro);
+    printf("\tu32: hexadecimal lido = 0x%04x \n",(int)inteiro);
     return inteiro;
 }
 uint16_t ClassFile::readU16() {
     uint16_t inteiro;
     arquivo.read( (char*)&inteiro, 2);
     inteiro = UtilsNumeros::swap_uint16(inteiro);
+    printf("\tu16: hexadecimal lido = 0x%04x \n",(int)inteiro);
     return inteiro;
 }
