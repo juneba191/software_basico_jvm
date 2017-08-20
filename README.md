@@ -1,8 +1,15 @@
-# Java Virtual Machine ( trabalho de software básico ). 
-Java Virtual Machine ( trabalho de software básico ).
+# Java Virtual Machine ( Trabalho de Software Básico ). 
+Java Virtual Machine , leitor , exibidor em c++. 
 
 
 Cuidado, a jvm é iniciante, significa q ela não sabe muitas coisas.
+# Programas Utilizados 
+  1 - JclassLib  
+    https://github.com/ingokegel/jclasslib
+  2 - Qualquer editor de hexadecimal.
+  
+  
+
 
 # Bibliografia:
 # Especificação da JVM
