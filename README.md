@@ -6,6 +6,7 @@ Cuidado, a jvm é iniciante, significa q ela não sabe muitas coisas.
 # Programas Utilizados 
   1 - JclassLib  
     https://github.com/ingokegel/jclasslib
+    
   2 - Qualquer editor de hexadecimal.
   
   
