@@ -9,7 +9,7 @@
 
 ClassFile::ClassFile(char* nome) {
     this->arquivo.open("Test.class",std::fstream::in | std::fstream::binary);
-
+    this->nome = std::string(nome);
     if (!this->arquivo.is_open())
     {
        Debug("Arquivo [" << nome << "] não foi aberto.\n");
@@ -43,14 +43,65 @@ void ClassFile::leClasse() {
     this->major_version = readU16();
     Debug("Major version = [" << std::hex << this->major_version << "]" << std::endl);
 
+    //le a constant pool count
+    this->cp_size = readU16();
+    Debug("cp size = [" <<  std::dec << this->cp_size << "]" << std::endl);
 
-
+    readConstantPool();
 
 
     return ;
 }
 
+void ClassFile::readConstantPool() {
 
+    u2 tamPool = this->cp_size - 1;
+    this->constant_pool= (cp_info*) malloc(sizeof(cp_info) * tamPool);
+
+    for(u2 i = 0 ; i < tamPool ;i++)
+    {
+        uint8_t tag = readU8();
+        //Debug("Tag lida["<< i <<"] =" <<std::dec << tag << "\n");
+        std::cout << tag;
+        this->constant_pool[i].tag = tag;
+
+        tag = this->constant_pool[i].tag;
+
+        std::cout << tag;
+
+
+        switch(tag)
+        {
+            case CONSTANT_Class:
+                constant_pool[i].info.class_info = getConstantClassInfo();
+            break;
+            case CONSTANT_Fieldref:
+                break;
+
+            default:
+                Debug("Foi encontrada uma tag invalida no arquivo [" << this->nome << "]\n");
+                exit(5);
+        }
+
+
+
+    }
+    return;
+}
+CONSTANT_Class_info ClassFile::getConstantClassInfo() {
+    CONSTANT_Class_info result;
+    result.name_index = readU16();
+
+    return result;
+}
+
+uint8_t ClassFile::readU8() {
+    uint8_t inteiro;
+    if (!arquivo.is_open()) Debug("perdeu a referencia no readu8");
+    arquivo.read((char*)&inteiro,1);
+
+    return (uint8_t)inteiro;
+}
 
 uint32_t ClassFile::readU32 () {
     uint32_t inteiro;
