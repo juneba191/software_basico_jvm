@@ -171,6 +171,9 @@ private:
     CONSTANT_Class_info getConstantClassInfo();
     CONSTANT_Methodref_info getConstantMethodRefInfo();
     CONSTANT_Fieldref_info getConstantFieldRefInfo();
+    CONSTANT_String_info getConstantStringInfo();
+    CONSTANT_Utf8_info getConstantUtf8Info();
+    CONSTANT_NameAndType_info getConstantNameAndType_info();
 };
 
 

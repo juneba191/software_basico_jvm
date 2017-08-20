@@ -59,7 +59,7 @@ void ClassFile::readConstantPool() {
     this->constant_pool= (cp_info*) malloc(sizeof(cp_info) * tamPool);
 
     printf("\n=====> INICIO READ CONSTANT POOL <<=======\n\n");
-    for(u2 i = 0 ; i < 3 ;i++)
+    for(u2 i = 0 ; i < tamPool ;i++)
     {
         uint8_t tag = readU8();
         //Debug("Tag lida["<< i <<"] =" <<std::dec << tag << "\n");
@@ -82,8 +82,20 @@ void ClassFile::readConstantPool() {
             case CONSTANT_Methodref:
                 Debug("entrou no case [MethodRef]\n");
                 constant_pool[i].info.methodref_info = getConstantMethodRefInfo();
-
                 break;
+            case CONSTANT_String:
+                Debug("ENTROU NO CASE [STRING INFO]\n");
+                constant_pool[i].info.string_info = getConstantStringInfo();
+                break;
+            case CONSTANT_Utf8:
+                Debug("ENTROU NO CASE [UTF8]\n");
+                constant_pool[i].info.utf8_info =  getConstantUtf8Info();
+                break;
+            case CONSTANT_NameAndType:
+                Debug("ENTROU NO CONSTANT_NAMEANDTYPE\n");
+                constant_pool[i].info.nameAndType_info = getConstantNameAndType_info();
+                break;
+
             default:
                 Debug("Foi encontrada uma tag invalida no arquivo [" << this->nome << "]\n");
                 exit(5);
@@ -91,6 +103,34 @@ void ClassFile::readConstantPool() {
         printf("\n");
     }
     return;
+}
+CONSTANT_NameAndType_info ClassFile::getConstantNameAndType_info() {
+    CONSTANT_NameAndType_info result;
+    result.name_index = readU16();
+    result.descriptor_index = readU16();
+
+   return result;
+}
+
+CONSTANT_Utf8_info ClassFile::getConstantUtf8Info() {
+
+    CONSTANT_Utf8_info result;
+    u2 tam  = readU16();
+
+    result.length = tam;
+    result.bytes = (u1*) malloc(sizeof(u1) * result.length);
+    for (u2 i = 0 ; i < result.length;i++)
+    {
+        result.bytes[i] = readU8();
+    }
+
+    return result;
+}
+CONSTANT_String_info ClassFile::getConstantStringInfo() {
+    CONSTANT_String_info result;
+    result.string_index = readU16();
+
+    return result;
 }
 
 CONSTANT_Fieldref_info ClassFile::getConstantFieldRefInfo() {
