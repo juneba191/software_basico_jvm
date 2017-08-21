@@ -7,6 +7,7 @@
 #include "cstdio"
 
 
+
 ClassFile::ClassFile(char* nome) {
     this->arquivo.open("HelloWorld.class",std::fstream::in | std::fstream::binary);
     this->nome = std::string(nome);
@@ -49,8 +50,61 @@ void ClassFile::leClasse() {
 
     readConstantPool();
 
+    Debug("========>FIM DA CONSTANT POOL<=========\n");
+
+    readAcessFlag();
+    Debug("Acess Flag = 0x" << std::hex << this->access_flags << std::endl);
+
+    readThisClass();
+    Debug("This Class: =" << this->this_class << std::endl);
+
+    readSuperClass();
+    Debug("Super Class: =" << this->super_class << std::endl);
+
+    readInterfaceCount();
+    Debug("Interface Count: =" << this->interface_count << std::endl);
+
+    Debug("entrou no metodo de ler as interfaces");
+    readInterfaces();
+    
+
+
+
+    /*todo terminar os possiveis tipo de constant pool*/
+
+
+
 
     return ;
+}
+
+void ClassFile::readInterfaces(){
+
+    this->interface_table = (u2*)malloc(sizeof(u2)*this->interface_count);
+    for (u2 i = 0 ; i < this->interface_count; i++)
+    {
+        this->interface_table[i] = readU16();
+    }
+
+}
+
+
+void ClassFile::readInterfaceCount() {
+    this->interface_count = readU16();
+}
+
+void ClassFile::readSuperClass(){
+    this->super_class = readU16();
+
+}
+
+void ClassFile::readThisClass() {
+    this->this_class = readU16();
+
+}
+void ClassFile::readAcessFlag() {
+    this->access_flags = readU16();
+
 }
 
 void ClassFile::readConstantPool() {
@@ -72,12 +126,10 @@ void ClassFile::readConstantPool() {
             case CONSTANT_Class:
                 Debug("entrou no case [CONSTANT CLASS]\n");
                 constant_pool[i].info.class_info = getConstantClassInfo();
-
                 break;
             case CONSTANT_Fieldref:
                 Debug("entrou no case [CONSTANT_Fieldref] \n");
                 constant_pool[i].info.fieldref_info = getConstantFieldRefInfo();
-
                 break;
             case CONSTANT_Methodref:
                 Debug("entrou no case [MethodRef]\n");
@@ -95,7 +147,26 @@ void ClassFile::readConstantPool() {
                 Debug("ENTROU NO CONSTANT_NAMEANDTYPE\n");
                 constant_pool[i].info.nameAndType_info = getConstantNameAndType_info();
                 break;
-
+            case CONSTANT_InterfaceMethodref:
+                Debug("Entrou no constant interface methodo info\n");
+                constant_pool[i].info.interfaceMethodref_info = getConstantInterfaceMethodRefInfo();
+                break;
+            case CONSTANT_Integer:
+                Debug("Entrou no constant integer info\n");
+                constant_pool[i].info.integer_info = getConstantIntegerInfo();
+                break;
+            case CONSTANT_Float:
+                Debug("Entrou no constant float info\n");
+                constant_pool[i].info.float_info = getConstantFloatInfo();
+                break;
+            case CONSTANT_Long:
+                Debug("Entrou no caso constant long\n");
+                constant_pool[i].info.long_info = getConstantLongInfo();
+                break;
+            case CONSTANT_Double:
+                Debug("Entrou no caso constant double\n");
+                constant_pool[i].info.double_info = getConstantDoubleInfo();
+                break;
             default:
                 Debug("Foi encontrada uma tag invalida no arquivo [" << this->nome << "]\n");
                 exit(5);
@@ -104,6 +175,59 @@ void ClassFile::readConstantPool() {
     }
     return;
 }
+
+
+CONSTANT_Double_info ClassFile::getConstantDoubleInfo() {
+    CONSTANT_Double_info result;
+    result.high_bytes = readU32();
+    result.low_bytes = readU32();
+
+    return result;
+}
+
+
+CONSTANT_Long_info ClassFile::getConstantLongInfo() {
+    //não testado.
+    CONSTANT_Long_info result;
+    result.high_bytes = readU32();
+    result.low_bytes = readU32();
+
+    return result;
+}
+
+
+
+CONSTANT_Float_info ClassFile::getConstantFloatInfo() {
+    //não testado
+    CONSTANT_Float_info result;
+    result.bytes = readU32();
+
+
+    return result;
+}
+
+
+CONSTANT_Integer_info ClassFile::getConstantIntegerInfo() {
+    //não testado.
+    CONSTANT_Integer_info result;
+    result.bytes = readU32();
+    return result;
+}
+
+
+
+
+CONSTANT_InterfaceMethodref_info ClassFile::getConstantInterfaceMethodRefInfo(){
+    // nao testado.
+    CONSTANT_InterfaceMethodref_info result;
+    result.class_index = readU16();
+    result.name_and_type_index = readU16();
+
+    return result;
+}
+
+
+
 CONSTANT_NameAndType_info ClassFile::getConstantNameAndType_info() {
     CONSTANT_NameAndType_info result;
     result.name_index = readU16();

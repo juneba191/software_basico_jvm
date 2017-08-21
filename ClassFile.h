@@ -128,6 +128,7 @@ typedef enum CONSTANT_Type {
     CONSTANT_NameAndType = 12,
     CONSTANT_Utf8 = 1,
     CONSTANT_NULL = 0
+
 } CONSTANT_Type;
 
 
@@ -168,12 +169,27 @@ private:
     u2 readU16();
     u1 readU8();
     void readConstantPool();
+    void readAcessFlag();
+    void readThisClass();
+    void readSuperClass();
+    void readInterfaceCount();
+    void readInterfaces();
+
+
+
     CONSTANT_Class_info getConstantClassInfo();
     CONSTANT_Methodref_info getConstantMethodRefInfo();
     CONSTANT_Fieldref_info getConstantFieldRefInfo();
     CONSTANT_String_info getConstantStringInfo();
     CONSTANT_Utf8_info getConstantUtf8Info();
     CONSTANT_NameAndType_info getConstantNameAndType_info();
+    CONSTANT_InterfaceMethodref_info getConstantInterfaceMethodRefInfo();
+    CONSTANT_Integer_info getConstantIntegerInfo();
+    CONSTANT_Float_info getConstantFloatInfo();
+    CONSTANT_Long_info getConstantLongInfo();
+    CONSTANT_Double_info getConstantDoubleInfo();
+
+
 };
 
 
