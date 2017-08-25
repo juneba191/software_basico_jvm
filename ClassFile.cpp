@@ -1,5 +1,4 @@
 //// Created by wagner on 15/08/17.
-//
 
 #include "ClassFile.h"
 #include "UtilsNumeros.h"
@@ -64,18 +63,55 @@ void ClassFile::leClasse() {
     readInterfaceCount();
     Debug("Interface Count: =" << this->interface_count << std::endl);
 
-    Debug("entrou no metodo de ler as interfaces");
+    Debug("entrou no metodo de ler as interfaces\n");
     readInterfaces();
     
+    readFieldsCount();
+    Debug("leu o field count = " << this->field_count << std::endl );
 
-
-
-    /*todo terminar os possiveis tipo de constant pool*/
-
+    readFields();
 
 
 
     return ;
+}
+
+
+void ClassFile::readFields() {
+    if (!this->field_count){
+        this->fields = NULL;
+
+    }
+    this->fields = (FieldInfo*)malloc(sizeof(FieldInfo)*this->field_count);
+
+
+    for (u2 i = 0 ; i < this->field_count ; i++)
+    {
+        this->fields->access_flags = readU16();
+        this->fields->name_index = readU16();
+        this->fields->descriptor_index = readU16();
+        this->fields->attributes_count = readU16();
+        this->fields->attributes = (attribute_info*)malloc(sizeof(attribute_info)*this->attributes_count);
+        for (u2 j = 0 ; j < this->fields->attributes_count; j++)
+        {
+            carregarAtributos(); //todo aqui
+        }
+
+
+    }
+
+
+
+}
+
+void ClassFile::carregarAtributos() {
+
+}
+
+void ClassFile::readFieldsCount() {
+
+    this->field_count = readU16();
+
 }
 
 void ClassFile::readInterfaces(){

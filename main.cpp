@@ -16,6 +16,7 @@ int main() {
 
     // Lê o arquivo.
     ClassFile classFile("HelloWorld.class");
+
     classFile.leClasse();
 
 
