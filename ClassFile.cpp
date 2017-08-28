@@ -4,6 +4,7 @@
 #include "UtilsNumeros.h"
 #include "Debug.h"
 #include "cstdio"
+#include <string>
 
 
 
@@ -73,6 +74,7 @@ void ClassFile::leClasse() {
 
 
 
+
     return ;
 }
 
@@ -94,22 +96,115 @@ void ClassFile::readFields() {
         this->fields->attributes = (attribute_info*)malloc(sizeof(attribute_info)*this->fields->attributes_count);
         for (u2 j = 0 ; j < this->fields->attributes_count; j++)
         {
-            carregarAtributos(); //todo aqui
+            this->fields->attributes[j] = carregarAtributos(); //todo aqui
         }
 
 
     }
+}
+// vai na tabela de constant pool que ja foi carregada, e carrega
+// os dados.
 
+CONSTANT_Utf8_info ClassFile::pegaUtf8ConstantPool(u2 index) {
+    // não testado.
+    cp_info teste = this->constant_pool[index-1];
+    return teste.info.utf8_info;
+}
+
+attribute_info ClassFile::carregarAtributos() {
+
+    attribute_info result;
+    result.attribute_name_index = readU16();
+    result.attribute_length = readU32();
+
+    CONSTANT_Utf8_info utf8_struct = pegaUtf8ConstantPool(result.attribute_name_index);
+
+    if (comparaIgual(utf8_struct,"ConstantValue")){
+        result.info.constantValue_Info = loadConstantValueAttribute();
+    } else if (comparaIgual(utf8_struct,"Code")) {
+        result.info.code_info = loadCodeAttribute();
+    } else if (comparaIgual(utf8_struct,"Exceptions"))
+    {
+        result.info.exceptions_info = loadExceptionAttribute();
+    }//todo aqui
+
+
+
+    return result;
+}
+Exceptions_attribute ClassFile::loadExceptionAttribute() {
+    Exceptions_attribute info;
+
+    info.number_of_exceptions = readU16();
+    for (u2 i = 0 ; i <  info.number_of_exceptions ; i++)
+    {
+        info.exceptions_index_table[i] = readU16();
+    }
+    return info;
+}
+
+
+Code_attributes ClassFile::loadCodeAttribute() {
+    Code_attributes result;
+    //acho q n tem isso aqui n? ou tem
+
+    //result.attribute_name_index = readU16();
+    //result.attribute_length = readU32();
+    //ate aqui
+    result.max_stack = readU16();
+    result.max_locals = readU16();
+    result.code_length = readU32();
+    result.code = (u1*) malloc(sizeof(u1)*result.code_length);
+    for (u2 i = 0 ; i < result.code_length; i++)
+    {
+        result.code[i] = readU8();
+    }
+    result.exception_table_length = readU16();
+    result.exception_table = (Exception_table_info*) malloc(sizeof(Exception_table_info) * result.exception_table_length);
+    for(u2 i = 0 ; i < result.exception_table_length;i++){
+        result.exception_table[i].start_pc = readU16();
+        result.exception_table[i].end_pc = readU16();
+        result.exception_table[i].handler_pc = readU16();
+        result.exception_table[i].catch_type = readU16();
+    }
+
+    result.attributes_count = readU16();
+    for (u2 i= 0 ; i < result.attributes_count; i++)
+    {
+        result.attributes[i] = carregarAtributos();
+    }
+
+
+    return result;
 
 
 }
 
-void ClassFile::carregarAtributos() {
 
 
+ConstantValue_attribute ClassFile::loadConstantValueAttribute() {
+    ConstantValue_attribute result;
+    result.attribute_name_index = readU16();
+    result.attribute_length = readU32();
+    result.constanvalue_index = readU16();
 
-
+    return result;//faltava isso né pai.
 }
+
+int ClassFile::comparaIgual(CONSTANT_Utf8_info utf8_struct,std::string nomeAttributo) {
+    if (utf8_struct.length != nomeAttributo.size()){
+        return false;
+    }
+    for (u2 i = 0 ; i < utf8_struct.length ; i++ )
+    {
+        if (utf8_struct.bytes[i] != nomeAttributo[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
+
 
 void ClassFile::readFieldsCount() {
 

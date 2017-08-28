@@ -1,9 +1,6 @@
 //
 // Created by wagner on 15/08/17.
 //
-
-
-
 #ifndef SOFTWAREBASICOJVM_CLASSFILE_H
 #define SOFTWAREBASICOJVM_CLASSFILE_H
 #define u4 uint32_t
@@ -220,8 +217,8 @@ struct Exception_table_info{
 
 
 struct Code_attributes {
-    u2 attribute_name_index;
-    u4 attribute_length;
+    //u2 attribute_name_index;
+    //u4 attribute_length;
     u2 max_stack;
     u2 max_locals;
     u4 code_length;
@@ -233,14 +230,12 @@ struct Code_attributes {
 };
 
 
-
-struct attribute_info{
-    u2 attribute_name_index;
-    u4 attribute_length;
-    u1* info;
-    //todo implementar os tipos de atributo voltar aqui.
-
+struct InnerClasses_attribute{
+    u2 number_of_classes;
+    classes_info* classes;
 };
+
+
 
 struct Exceptions_attribute{
     u2 number_of_exceptions;
@@ -254,10 +249,6 @@ struct classes_info{
     u2 inner_class_access_flags;
 };
 
-struct InnerClasses_attribute{
-    u2 number_of_classes;
-    classes_info* classes;
-};
 
 struct Syntethic_attribute{
     // ela nao possui nenhum atributo principal.
@@ -272,6 +263,22 @@ struct field_info {
     attribute_info* attributes;
 };
 
+struct attribute_info{
+    u2 attribute_name_index;
+    u4 attribute_length;
+    union{
+        InnerClasses_attribute innerClasses_attribute_info;
+        Code_attributes code_info;
+        ConstantValue_attribute constantValue_Info;
+        Exceptions_attribute exceptions_info;
+        Syntethic_attribute syntethic_attribute;
+        SourceFile_attribute sourceFile_attribute;
+        lineNumberTable lineNumberTable_info;
+        LocalVariableTable_attribute localVariableTable_info;
+        Deprecated_attribute Deprecated_attribute_info;
+    }info;
+
+};
 
 class ClassFile {
 private:
@@ -313,7 +320,15 @@ private:
     void readInterfaces();
     void readFieldsCount();
     void readFields();
-    void carregarAtributos();
+    attribute_info carregarAtributos();
+    int comparaIgual(CONSTANT_Utf8_info utf8_struct,std::string nomeAttributo);
+    CONSTANT_Utf8_info pegaUtf8ConstantPool(u2);
+
+    //carregar os atributos nas funções abaixo....
+    ConstantValue_attribute loadConstantValueAttribute();
+    Code_attributes loadCodeAttribute();
+    Exceptions_attribute loadExceptionAttribute();
+
 
     //le os tipos de constant pool
     CONSTANT_Class_info getConstantClassInfo();
@@ -327,6 +342,7 @@ private:
     CONSTANT_Float_info getConstantFloatInfo();
     CONSTANT_Long_info getConstantLongInfo();
     CONSTANT_Double_info getConstantDoubleInfo();
+
 
 };
 
