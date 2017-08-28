@@ -43,7 +43,8 @@ typedef struct LocalVariableTable_attribute LocalVariableTable_attribute;
 typedef struct local_variable_table local_variable_table;
 typedef struct Deprecated_attribute Deprecated_attribute;
 
-
+//methods
+typedef struct MethodInfo MethodInfo;
 
 
 struct CONSTANT_Class_info {
@@ -229,6 +230,12 @@ struct Code_attributes {
     attribute_info* attributes;
 };
 
+struct classes_info{
+    u2 inner_class_info_index;
+    u2 outer_class_info_index;
+    u2 inner_name_index;
+    u2 inner_class_access_flags;
+};
 
 struct InnerClasses_attribute{
     u2 number_of_classes;
@@ -242,12 +249,6 @@ struct Exceptions_attribute{
     u2* exceptions_index_table;
 };
 
-struct classes_info{
-    u2 inner_class_info_index;
-    u2 outer_class_info_index;
-    u2 inner_name_index;
-    u2 inner_class_access_flags;
-};
 
 
 struct Syntethic_attribute{
@@ -273,10 +274,18 @@ struct attribute_info{
         Exceptions_attribute exceptions_info;
         Syntethic_attribute syntethic_attribute;
         SourceFile_attribute sourceFile_attribute;
-        lineNumberTable lineNumberTable_info;
+        LineNumberTable_attributes lineNumberTable_info;
         LocalVariableTable_attribute localVariableTable_info;
         Deprecated_attribute Deprecated_attribute_info;
     }info;
+
+};
+struct MethodInfo {
+    u2 access_flags;
+    u2 name_index;
+    u2 descriptor_index;
+    u2 attributes_count;
+    attribute_info* attributes;
 
 };
 
@@ -298,9 +307,9 @@ public:
     u2	field_count;
     FieldInfo* 	fields;
     u2	methods_count;
-    //MethodInfo*	methods;
+    MethodInfo*	methods;
     u2	attributes_count;
-    //AttributeInfo* attributes;
+    attribute_info* attributes;
 
 
     /*trata a classe totalmente.*/
@@ -324,10 +333,21 @@ private:
     int comparaIgual(CONSTANT_Utf8_info utf8_struct,std::string nomeAttributo);
     CONSTANT_Utf8_info pegaUtf8ConstantPool(u2);
 
+    void readMethodCount();
+    void readMethodInfo();
+    void readAttributesCount();
+    void readAttributes();
+
     //carregar os atributos nas funções abaixo....
     ConstantValue_attribute loadConstantValueAttribute();
     Code_attributes loadCodeAttribute();
     Exceptions_attribute loadExceptionAttribute();
+    InnerClasses_attribute loadInnerClassAttribute();
+    Syntethic_attribute loadSyntethicAttribute();
+    SourceFile_attribute loadSourceFileAttribute();
+    LineNumberTable_attributes loadNumberTableAttribute();
+    LocalVariableTable_attribute loadLocalVariableTableInfo();
+    Deprecated_attribute loadDeprecatedAttributeInfo();
 
 
     //le os tipos de constant pool
@@ -342,7 +362,6 @@ private:
     CONSTANT_Float_info getConstantFloatInfo();
     CONSTANT_Long_info getConstantLongInfo();
     CONSTANT_Double_info getConstantDoubleInfo();
-
 
 };
 

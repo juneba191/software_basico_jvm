@@ -70,13 +70,56 @@ void ClassFile::leClasse() {
     readFieldsCount();
     Debug("leu o field count = " << this->field_count << std::endl );
 
-    readFields();
+    readFields();//não testei
+    Debug("leu os fields do programa \n");
 
 
+    readMethodCount();
+    Debug("leu a quantidade de metodos = " << this->methods_count << "\n");
 
+    readMethodInfo();
+    Debug("leu os metodos\n");
+    readAttributesCount();
+    Debug("Leu o attribute Counter = " << this->attributes_count << "\n");
+
+    readAttributes();
+    Debug("Leu os atributos\n");
 
     return ;
 }
+void ClassFile::readAttributes() {
+    this->attributes = (attribute_info*) malloc(sizeof(attribute_info)* this->attributes_count);
+    for (u2 i = 0 ; i < this->attributes_count ; i++)
+    {
+        this->attributes[i] = carregarAtributos();
+    }
+
+}
+
+void ClassFile::readAttributesCount() {
+    this->attributes_count = readU16();
+}
+
+void ClassFile::readMethodCount() {
+    this->methods_count = readU16();
+}
+
+void ClassFile::readMethodInfo() {
+    this->methods = (MethodInfo*) malloc(sizeof(MethodInfo)* this->methods_count);
+    for (u2 i =0; i < this->methods_count;i++)
+    {
+        this->methods[i].access_flags = readU16();
+        this->methods[i].name_index = readU16();
+        this->methods[i].descriptor_index = readU16();
+        this->methods[i].attributes_count = readU16();
+        this->methods[i].attributes = (attribute_info*)malloc(sizeof(attribute_info)*this->methods[i].attributes_count);
+        for (u2 j = 0 ; j < this->methods[i].attributes_count;j++){
+            this->methods[i].attributes[j] = carregarAtributos();
+        }
+    }
+    return;
+}
+
 
 
 void ClassFile::readFields() {
@@ -85,7 +128,6 @@ void ClassFile::readFields() {
 
     }
     this->fields = (FieldInfo*)malloc(sizeof(FieldInfo)*this->field_count);
-
 
     for (u2 i = 0 ; i < this->field_count ; i++)
     {
@@ -126,12 +168,98 @@ attribute_info ClassFile::carregarAtributos() {
     } else if (comparaIgual(utf8_struct,"Exceptions"))
     {
         result.info.exceptions_info = loadExceptionAttribute();
-    }//todo aqui
-
-
-
+    }else if (comparaIgual(utf8_struct,"InnerClasses") )
+    {
+        result.info.innerClasses_attribute_info = loadInnerClassAttribute();
+    }else if (comparaIgual(utf8_struct,"Synthetic")){
+        result.info.syntethic_attribute =  loadSyntethicAttribute();
+    }else if (comparaIgual(utf8_struct,"SourceFile")) {
+        result.info.sourceFile_attribute = loadSourceFileAttribute();
+    }else if (comparaIgual(utf8_struct,"LineNumberTable")){
+        result.info.lineNumberTable_info = loadNumberTableAttribute();
+    }else if (comparaIgual(utf8_struct,"LocalVariableTable"))
+    {
+        result.info.localVariableTable_info = loadLocalVariableTableInfo();
+    }else if (comparaIgual(utf8_struct,"Deprecated") ){
+        result.info.Deprecated_attribute_info = loadDeprecatedAttributeInfo();
+    }else{
+        Debug("Possui atributo não reconhecido\n");
+    }
     return result;
 }
+
+Deprecated_attribute ClassFile::loadDeprecatedAttributeInfo() {
+    Deprecated_attribute info;
+
+    return info;
+}
+
+
+LocalVariableTable_attribute ClassFile::loadLocalVariableTableInfo() {
+    LocalVariableTable_attribute info;
+    info.local_variable_table_length = readU16();
+    info.local_table = (local_variable_table*) malloc(sizeof(local_variable_table)*info.local_variable_table_length);
+
+    for (u2 i = 0 ; i < info.local_variable_table_length ; i++)
+    {
+        info.local_table[i].start_pc = readU16();
+        info.local_table[i].length = readU16();
+        info.local_table[i].name_index = readU16();
+        info.local_table[i].descriptor_index = readU16();
+        info.local_table[i].index = readU16();
+    }
+
+    return info;
+}
+
+
+LineNumberTable_attributes ClassFile::loadNumberTableAttribute() {
+    LineNumberTable_attributes  info;
+    info.line_number_table_length = readU16();
+    info.lineTable = (lineNumberTable*)malloc(sizeof(lineNumberTable)*info.line_number_table_length);
+
+    for (u2 i = 0 ; i < info.line_number_table_length; i++)
+    {
+        info.lineTable[i].start_pc = readU16();
+        info.lineTable[i].line_number = readU16();
+    }
+
+    return info;
+}
+
+
+
+SourceFile_attribute ClassFile::loadSourceFileAttribute() {
+    //testar
+
+    SourceFile_attribute info;
+    info.sourcefile_index = readU16();
+
+    return info;
+}
+
+
+Syntethic_attribute ClassFile::loadSyntethicAttribute() {
+    Syntethic_attribute info;
+    return info;
+}
+
+
+InnerClasses_attribute ClassFile::loadInnerClassAttribute() {
+    InnerClasses_attribute info;
+
+    info.number_of_classes = readU16();
+    info.classes = (classes_info*) malloc(sizeof(classes_info) * info.number_of_classes);
+    for (u2 i = 0 ; i < info.number_of_classes; i++)
+    {
+        info.classes[i].inner_class_info_index = readU16();
+        info.classes[i].outer_class_info_index = readU16();
+        info.classes[i].inner_name_index = readU16();
+        info.classes[i].inner_class_access_flags = readU16();
+    }
+    return info;
+}
+
 Exceptions_attribute ClassFile::loadExceptionAttribute() {
     Exceptions_attribute info;
 
@@ -169,6 +297,7 @@ Code_attributes ClassFile::loadCodeAttribute() {
     }
 
     result.attributes_count = readU16();
+    result.attributes = (attribute_info*)malloc(sizeof(attributes) * result.attributes_count);
     for (u2 i= 0 ; i < result.attributes_count; i++)
     {
         result.attributes[i] = carregarAtributos();
