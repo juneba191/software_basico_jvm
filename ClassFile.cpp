@@ -91,7 +91,7 @@ void ClassFile::readFields() {
         this->fields->name_index = readU16();
         this->fields->descriptor_index = readU16();
         this->fields->attributes_count = readU16();
-        this->fields->attributes = (attribute_info*)malloc(sizeof(attribute_info)*this->attributes_count);
+        this->fields->attributes = (attribute_info*)malloc(sizeof(attribute_info)*this->fields->attributes_count);
         for (u2 j = 0 ; j < this->fields->attributes_count; j++)
         {
             carregarAtributos(); //todo aqui
@@ -105,6 +105,9 @@ void ClassFile::readFields() {
 }
 
 void ClassFile::carregarAtributos() {
+
+
+
 
 }
 
