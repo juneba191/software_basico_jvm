@@ -6,7 +6,7 @@
 #define u4 uint32_t
 
 #define u1 uint8_t
-
+#define u8 uint64_t
 #define u2 uint16_t
 
 #include <stdint.h>
@@ -27,6 +27,10 @@ typedef struct CONSTANT_Long_info CONSTANT_Long_info;
 typedef struct CONSTANT_Double_info CONSTANT_Double_info;
 typedef struct CONSTANT_NameAndType_info CONSTANT_NameAndType_info;
 typedef struct CONSTANT_Utf8_info CONSTANT_Utf8_info;
+typedef struct CONSTANT_InvokeDynamic_info CONSTANT_InvokeDynamic_info;
+typedef struct CONSTANT_MethodType_info CONSTANT_MethodType_info;
+typedef struct CONSTANT_MethodHandle_info CONSTANT_MethodHandle_info;
+
 typedef struct field_info FieldInfo;
 typedef struct  attribute_info attribute_info;
 
@@ -85,7 +89,7 @@ struct CONSTANT_String_info{
 
 struct CONSTANT_Integer_info{
     u1 tag;
-    u2 bytes;
+    u4 bytes;
 };
 
 struct CONSTANT_Float_info{
@@ -93,13 +97,34 @@ struct CONSTANT_Float_info{
     u4 bytes;
 };
 
+struct CONSTANT_MethodHandle_info
+{
+    u1 tag;
+    u1 reference_kind;
+    u2 reference_index;
+};
+struct CONSTANT_MethodType_info
+{
+    u1 tag;
+    u2 descriptor_index;
+};
+
+struct CONSTANT_InvokeDynamic_info
+{
+    u1 tag;
+    u2 bootstrap_method_attr_index;
+    u2 name_and_type_index;
+};
+
 struct CONSTANT_Long_info{
     u1 tag;
+    u8 value;
     u4 high_bytes;
     u4 low_bytes;
 };
 struct CONSTANT_Double_info{
     u1 tag;
+    u8 value;    
     u4 high_bytes;
     u4 low_bytes;
 };
@@ -157,6 +182,9 @@ struct cp_info{
         struct CONSTANT_Double_info double_info;
         struct CONSTANT_NameAndType_info nameAndType_info;
         struct CONSTANT_Utf8_info utf8_info;
+        struct CONSTANT_MethodHandle_info methodHandle_info;
+        struct CONSTANT_MethodType_info methodType_info;
+        struct CONSTANT_InvokeDynamic_info invokeDynamic_info;
     } info;
 
 };
@@ -173,8 +201,10 @@ typedef enum CONSTANT_Type {
     CONSTANT_Double = 6,
     CONSTANT_NameAndType = 12,
     CONSTANT_Utf8 = 1,
-    CONSTANT_NULL = 0
-
+    CONSTANT_NULL = 0,
+    CONSTANT_MethodHandle = 15,
+    CONSTANT_MethodType = 16,
+    CONSTANT_InvokeDynamic = 18
 } CONSTANT_Type;
 
 typedef enum CONSTANT_ACCESS_FLAGS{
@@ -205,7 +235,7 @@ typedef enum CONSTANT_ACCESS_FLAGS_INNERFLAGS{
 struct ConstantValue_attribute{
     u2 attribute_name_index;
     u4 attribute_length;
-    u2 constanvalue_index;
+    u2 constantvalue_index;
 
 };
 struct Exception_table_info{
@@ -218,8 +248,8 @@ struct Exception_table_info{
 
 
 struct Code_attributes {
-    //u2 attribute_name_index;
-    //u4 attribute_length;
+    u2 attribute_name_index;
+    u4 attribute_length;
     u2 max_stack;
     u2 max_locals;
     u4 code_length;
@@ -292,20 +322,20 @@ struct MethodInfo {
 class ClassFile {
 private:
     std::string nome;
-    std::fstream arquivo;
+    std::ifstream arquivo;
 public:
     u4 	magic_number;
     u2 	minor_version;
     u2 	major_version;
     u2 	cp_size;
-    Cp_Info* 	constant_pool;
+    Cp_Info* constant_pool;
     u2 	access_flags;
     u2	this_class;
     u2	super_class;
     u2	interface_count;
     u2*	interface_table;
     u2	field_count;
-    FieldInfo* 	fields;
+    field_info* 	fields;
     u2	methods_count;
     MethodInfo*	methods;
     u2	attributes_count;
@@ -315,12 +345,9 @@ public:
     /*trata a classe totalmente.*/
     void leClasse();
     /*Carrega o caminho do  arquivo para a Classe simplesmente.*/
-    ClassFile(char* nome);
+    ClassFile(std::string nome);
 private:
     /*leUint32*/
-    u4 readU32();
-    u2 readU16();
-    u1 readU8();
     void readConstantPool();
     void readAcessFlag();
     void readThisClass();
@@ -330,7 +357,6 @@ private:
     void readFieldsCount();
     void readFields();
     attribute_info carregarAtributos();
-    int comparaIgual(CONSTANT_Utf8_info utf8_struct,std::string nomeAttributo);
     CONSTANT_Utf8_info pegaUtf8ConstantPool(u2);
 
     void readMethodCount();
@@ -362,6 +388,11 @@ private:
     CONSTANT_Float_info getConstantFloatInfo();
     CONSTANT_Long_info getConstantLongInfo();
     CONSTANT_Double_info getConstantDoubleInfo();
+    CONSTANT_MethodType_info getConstantMethodTypeInfo();
+    CONSTANT_MethodHandle_info getConstantMethodHandleInfo();
+    CONSTANT_InvokeDynamic_info getConstantInvokeDynamicInfo();
+
+
 
 };
 
