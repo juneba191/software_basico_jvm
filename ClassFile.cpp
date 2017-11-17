@@ -89,6 +89,7 @@ void ClassFile::readMethodInfo() {
         readu2FromFile(&this->methods[i].name_index, 1, arquivo);
         readu2FromFile(&this->methods[i].descriptor_index, 1, arquivo);
         readu2FromFile(&this->methods[i].attributes_count, 1, arquivo);
+        
         this->methods[i].attributes = (attribute_info*)malloc(sizeof(attribute_info)*this->methods[i].attributes_count);
         for (u2 j = 0 ; j < this->methods[i].attributes_count;j++){
             this->methods[i].attributes[j] = carregarAtributos();
@@ -146,7 +147,6 @@ attribute_info ClassFile::carregarAtributos() {
         result.info.sourceFile_attribute = loadSourceFileAttribute();
     }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"LineNumberTable")){
         result.info.lineNumberTable_info = loadNumberTableAttribute();
-        std::cout<<result.info.lineNumberTable_info.lineTable[0].line_number;
     }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"LocalVariableTable"))
     {
         result.info.localVariableTable_info = loadLocalVariableTableInfo();
@@ -154,7 +154,7 @@ attribute_info ClassFile::carregarAtributos() {
         result.info.Deprecated_attribute_info = loadDeprecatedAttributeInfo();
     }else{
         
-        std::cout<<this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes<<"teste\n";
+        std::cout<<this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes<<"Unkown Attribute\n";
     }
     return result;
 }
@@ -194,7 +194,6 @@ LineNumberTable_attributes ClassFile::loadNumberTableAttribute() {
         readu2FromFile(&info.lineTable[i].start_pc, 1, arquivo);
         readu2FromFile(&info.lineTable[i].line_number, 1, arquivo);
     }
-
     return info;
 }
 
@@ -263,7 +262,7 @@ Code_attributes ClassFile::loadCodeAttribute() {
     }
 
     readu2FromFile(&result.attributes_count, 1, arquivo);
-    result.attributes = (attribute_info*)malloc(sizeof(attributes) * result.attributes_count);
+    result.attributes = (attribute_info*)malloc(sizeof(attribute_info) * result.attributes_count);
     for (u2 i= 0 ; i < result.attributes_count; i++)
     {
         result.attributes[i] = carregarAtributos();

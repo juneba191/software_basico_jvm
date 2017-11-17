@@ -43,6 +43,7 @@ typedef struct classes_info classes_info;
 typedef struct Syntethic_attribute Syntethic_attribute;
 typedef struct SourceFile_attribute SourceFile_attribute;
 typedef struct LineNumberTable_attributes LineNumberTable_attributes;
+typedef struct lineNumberTable lineNumberTable;
 typedef struct LocalVariableTable_attribute LocalVariableTable_attribute;
 typedef struct local_variable_table local_variable_table;
 typedef struct Deprecated_attribute Deprecated_attribute;
