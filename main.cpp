@@ -17,7 +17,7 @@ int main() {
 
 
     // Lê o arquivo.
-    ClassFile *classFile = new ClassFile("tFiles//CountWheat.class");
+    ClassFile *classFile = new ClassFile("tFiles//TesteSwitch.class");
     classFile->leClasse();
     Interpreter::GetInstance()->AddClass(classFile);
     Frame::SetUp();
