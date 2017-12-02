@@ -5,12 +5,8 @@
 #include <string>
 
 ClassFile::ClassFile(std::string nome) {
-    this->arquivo.open("Belote.class",std::ifstream::in | std::ifstream::binary);
+    std::cout<<"lendo arquivo\n";
     this->nome = std::string(nome);
-    if (!this->arquivo.is_open())
-    {
-       exit(1);
-    }
 }
 
 u1 readu1FromFile(u1* ptr,int count, std::ifstream &stream){
@@ -28,12 +24,13 @@ u1 readu1FromFile(u1* ptr,int count, std::ifstream &stream){
             *(ptr+i) = aux;\
         }\
 	return aux;\
-}
-	readFromFile(u2, 2); /*Esses pontos e virgulas são inuteis :)*/
-	readFromFile(u4, 4);
-	readFromFile(u8, 8);
+    }
+readFromFile(u2, 2); /*Esses pontos e virgulas são inuteis :)*/
+readFromFile(u4, 4);
+readFromFile(u8, 8);
 
 void ClassFile::leClasse() {
+    this->arquivo.open(nome, std::ifstream::in | std::ifstream::binary);
     if (!this->arquivo.is_open())
     {
         
@@ -62,6 +59,7 @@ void ClassFile::leClasse() {
     readMethodInfo();
     readAttributesCount();
     readAttributes();
+    this->arquivo.close();
     return ;
 }
 void ClassFile::readAttributes() {
@@ -385,6 +383,8 @@ void ClassFile::readConstantPool() {
 CONSTANT_Double_info ClassFile::getConstantDoubleInfo() {
     CONSTANT_Double_info result;
     readu8FromFile(&result.value, 1, arquivo);
+    result.high_bytes = result.value>>32;
+    result.low_bytes = result.value<<32;
     return result;
 }
 

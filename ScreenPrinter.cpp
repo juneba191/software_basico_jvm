@@ -611,8 +611,8 @@ void Screen_Print_Constant_Type(cp_info *constant_pool, u2 index, bool cem = fal
         break;
     case(10):
         {
-            u2 high = cp->info.methodref_info.class_index;
-            u2 low = cp->info.methodref_info.name_and_type_index;
+        u2 high = cp->info.methodref_info.class_index;
+        u2 low = cp->info.methodref_info.name_and_type_index;
             if (cem)
             {
                 std::cout << "Methodref\t\t#" << high << ".#" << low << "\t\t// ";
@@ -1202,7 +1202,6 @@ printype("SourceFile", ScreenPrintSourceFileAttribute(ai, cp))
 void ScreenPrintAttributes(attribute_info* ai, cp_info *cp) {
 	char type[100];
 	strcpy(type, (char*)cp[ai->attribute_name_index - 1].info.utf8_info.bytes);
-
     std::cout << type << ":\t//Attribute length: " << ai->attribute_length << std::endl;
 	
 #define printype(name,function) if(strcmp(name,type)==0) { function; }

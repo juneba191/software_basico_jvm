@@ -6,7 +6,8 @@
 #include "ScreenPrinter.h"
 #include <string.h>
 #include "Debug.h"
-
+#include "Frame.h"
+#include "Interpreter.h"
 
 using namespace std;
 
@@ -16,9 +17,10 @@ int main() {
 
 
     // Lê o arquivo.
-    ClassFile classFile("Hello.class");
-    classFile.leClasse();
-    Screen_Print_Javap_Format(classFile);
-
+    ClassFile *classFile = new ClassFile("tFiles//CountWheat.class");
+    classFile->leClasse();
+    Interpreter::GetInstance()->AddClass(classFile);
+    Frame::SetUp();
+    Interpreter::GetInstance()->Run(classFile);
     return 0;
 }
