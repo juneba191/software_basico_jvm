@@ -364,6 +364,9 @@ private:
     void readMethodInfo();
     void readAttributesCount();
     void readAttributes();
+    
+    /*compara utf8 string*/
+	int comparaIgual(CONSTANT_Utf8_info utf8_struct, std::string nomeAttributo);
 
     //carregar os atributos nas funções abaixo....
     ConstantValue_attribute loadConstantValueAttribute();
@@ -392,7 +395,6 @@ private:
     CONSTANT_MethodType_info getConstantMethodTypeInfo();
     CONSTANT_MethodHandle_info getConstantMethodHandleInfo();
     CONSTANT_InvokeDynamic_info getConstantInvokeDynamicInfo();
-
 
 
 };

@@ -1,6 +1,7 @@
 #include "Interpreter.h"
 #include "ScreenPrinter.h"
 #include "ClassFile.h"
+#include "Debug.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -8,6 +9,7 @@
 Interpreter* Interpreter::instance = NULL;
 
 Interpreter::Interpreter(){
+	Debug("Criou Interpreter");
 }
 
 Interpreter* Interpreter::GetInstance(){
@@ -20,7 +22,7 @@ Interpreter* Interpreter::GetInstance(){
 void Interpreter::Run(ClassFile* mainClass){
 	ClassInstance* mainInstance = new ClassInstance();
 	mainInstance->classDescription = mainClass;
-
+	
 	int mainIndex = 0;
 
 	for (mainIndex = 0; mainIndex < (int)mainClass->methods_count; mainIndex++) {
@@ -28,7 +30,6 @@ void Interpreter::Run(ClassFile* mainClass){
 		if (!strcmp(mname, "main"))
 			break;
 	}
-
 	if (mainIndex == (int)mainClass->methods_count) {
 		std::cout << "Main not found!!" << std::endl;
 		return;
@@ -44,17 +45,18 @@ void Interpreter::Run(ClassFile* mainClass){
 
 	std::string keystring(className);
 	keystring += ".class";
-
+		
 	staticInstances[keystring] = mainInstance;
 	CreateFieldVars(mainInstance);
 
 	Frame* mainFrame = new Frame(mainClass, mainClass->constant_pool, mainInstance, mainIndex);
 
 	executionStack.push(mainFrame);
-
+	
 	while(!executionStack.empty()){
 		executionStack.top()->Execute();
 	}
+	
 }
 
 void Interpreter::PushFrame(Frame* frame){
@@ -115,7 +117,7 @@ ClassFile* Interpreter::GetClass(std::string key){
 	ClassFile* aux2 = loadedClasses[subkey];
 	//If not loaded load class
 	if(aux == 0){
-		aux2->leClasse(); //TODO ver se ta certo isso.
+		aux2 = new ClassFile(subkey);
 		AddClass(aux2);
 		//loadedClasses[subkey] = aux2;
 	}
@@ -137,7 +139,7 @@ ClassFile* Interpreter::GetClass(const char* key){
 	ClassFile* aux = loadedClasses[keystring];
 
 	if(aux == NULL){
-		aux->leClasse();
+		aux = new ClassFile(keystring);
 		AddClass(aux);
 		//loadedClasses[keystring] = aux;
 	}

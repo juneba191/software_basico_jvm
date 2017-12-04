@@ -16,8 +16,7 @@ int main(int argc, char *argv[])
 
     // Lê o arquivo.
     string nome = argv[1];
-    ClassFile *classFile = new ClassFile(nome);
-    classFile->leClasse();
+    ClassFile *classFile = new ClassFile(nome);    
     Interpreter::GetInstance()->AddClass(classFile);
     Frame::SetUp();
     Interpreter::GetInstance()->Run(classFile);

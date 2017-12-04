@@ -3,10 +3,12 @@
 #include <cstring>
 #include "cstdio"
 #include <string>
+#include "Debug.h"
 
 ClassFile::ClassFile(std::string nome) {
-    std::cout<<"lendo arquivo\n";
     this->nome = std::string(nome);
+    this->leClasse();
+    Debug("Classe lida com sucesso");
 }
 
 u1 readu1FromFile(u1* ptr,int count, std::ifstream &stream){
@@ -31,22 +33,23 @@ readFromFile(u8, 8);
 
 void ClassFile::leClasse() {
     this->arquivo.open(nome, std::ifstream::in | std::ifstream::binary);
+    
     if (!this->arquivo.is_open())
     {
-        
-        std::cout<<" file not opened"<<std::endl;
+        Debug("File not opened\n");
         exit(1);
     }
 
     readu4FromFile(&this->magic_number, 1, arquivo);
     if (this->magic_number != 0xCAFEBABE){
-        std::cout<<"Magic number not 0xCAFEBABE"<<std::endl;
+        Debug("Magic number not 0xCAFEBABE\n");
         exit(1);
     }
 
     readu2FromFile(&this->minor_version, 1, arquivo);
     readu2FromFile(&this->major_version, 1, arquivo);
     readu2FromFile(&this->cp_size, 1, arquivo);
+    
     readConstantPool();
     readAcessFlag();
     readThisClass();
@@ -62,13 +65,13 @@ void ClassFile::leClasse() {
     this->arquivo.close();
     return ;
 }
+
 void ClassFile::readAttributes() {
     this->attributes = (attribute_info*) malloc(sizeof(attribute_info)* this->attributes_count);
     for (u2 i = 0 ; i < this->attributes_count ; i++)
     {
         this->attributes[i] = carregarAtributos();
     }
-
 }
 
 void ClassFile::readAttributesCount() {
@@ -129,30 +132,27 @@ attribute_info ClassFile::carregarAtributos() {
     attribute_info result;
     readu2FromFile(&result.attribute_name_index, 1, arquivo);
     readu4FromFile(&result.attribute_length, 1, arquivo);
-    if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"ConstantValue")){
+    
+    if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"ConstantValue")){
         result.info.constantValue_Info = loadConstantValueAttribute();
-    } else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"Code")) {
+    } else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"Code")) {
         result.info.code_info = loadCodeAttribute();
-    } else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"Exceptions"))
-    {
+    } else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"Exceptions")) {
         result.info.exceptions_info = loadExceptionAttribute();
-    }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"InnerClasses") )
-    {
+    }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"InnerClasses")) {
         result.info.innerClasses_attribute_info = loadInnerClassAttribute();
-    }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"Synthetic")){
+    }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"Synthetic")) {
         result.info.syntethic_attribute =  loadSyntethicAttribute();
-    }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"SourceFile")) {
+    }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"SourceFile")) {
         result.info.sourceFile_attribute = loadSourceFileAttribute();
-    }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"LineNumberTable")){
+    }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"LineNumberTable")) {
         result.info.lineNumberTable_info = loadNumberTableAttribute();
-    }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"LocalVariableTable"))
-    {
+    }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"LocalVariableTable")) {
         result.info.localVariableTable_info = loadLocalVariableTableInfo();
-    }else if (!strcmp((char*)this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes,"Deprecated") ){
+    }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"Deprecated")) {
         result.info.Deprecated_attribute_info = loadDeprecatedAttributeInfo();
     }else{
-        
-        std::cout<<this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes<<"Unkown Attribute\n";
+        std::cout << this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes << " Atributo Desconhecido\n";
     }
     return result;
 }
@@ -199,7 +199,6 @@ LineNumberTable_attributes ClassFile::loadNumberTableAttribute() {
 
 SourceFile_attribute ClassFile::loadSourceFileAttribute() {
     //testar
-
     SourceFile_attribute info;
     readu2FromFile(&info.sourcefile_index, 1, arquivo);
 
@@ -443,10 +442,12 @@ CONSTANT_Utf8_info ClassFile::getConstantUtf8Info() {
 
     CONSTANT_Utf8_info result;
     readu2FromFile(&result.length, 1, arquivo);
-    result.bytes = (u1*) malloc(sizeof(u1) * result.length);
+    result.bytes = (u1*) malloc(sizeof(u1) * result.length+1);
     readu1FromFile(result.bytes, result.length, arquivo);
+    result.bytes[result.length] = '\0';
     return result;
 }
+
 CONSTANT_String_info ClassFile::getConstantStringInfo() {
     CONSTANT_String_info result;
     readu2FromFile(&result.string_index, 1, arquivo);
@@ -500,4 +501,18 @@ CONSTANT_InvokeDynamic_info ClassFile::getConstantInvokeDynamicInfo()
     readu2FromFile(&result.name_and_type_index, 1, arquivo);
 
     return result;
+}
+
+int ClassFile::comparaIgual(CONSTANT_Utf8_info utf8_struct, std::string nomeAttributo) {
+    if (utf8_struct.length != nomeAttributo.size()){
+        return false;
+    }
+    for (u2 i = 0 ; i < utf8_struct.length ; i++ )
+    {
+
+        if (utf8_struct.bytes[i] != nomeAttributo[i]){
+            return false;
+        }
+    }
+    return true;
 }
