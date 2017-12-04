@@ -11,13 +11,12 @@
 
 using namespace std;
 
-
-
-int main() {
-
+int main(int argc, char *argv[])
+{
 
     // Lê o arquivo.
-    ClassFile *classFile = new ClassFile("tFiles//TesteSwitch.class");
+    string nome = argv[1];
+    ClassFile *classFile = new ClassFile(nome);
     classFile->leClasse();
     Interpreter::GetInstance()->AddClass(classFile);
     Frame::SetUp();

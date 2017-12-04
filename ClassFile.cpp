@@ -357,11 +357,13 @@ void ClassFile::readConstantPool() {
             case CONSTANT_Long:
                 
                 constant_pool[i].info.long_info = getConstantLongInfo();
-                break;
+		i++;                
+		break;
             case CONSTANT_Double:
                 
                 constant_pool[i].info.double_info = getConstantDoubleInfo();
-                break;
+		i++;                
+		break;
             case CONSTANT_MethodHandle:
                 constant_pool[i].info.methodHandle_info = getConstantMethodHandleInfo();
                 break;
