@@ -36,7 +36,7 @@ void ClassFile::leClasse() {
     
     if (!this->arquivo.is_open())
     {
-        Debug("File not opened\n");
+    	Debug(nome << ": file class not found.\n");
         exit(1);
     }
 
