@@ -322,7 +322,7 @@ struct MethodInfo {
 
 class ClassFile {
 private:
-    std::string nome;
+	std::string nome;
     std::ifstream arquivo;
 public:
     u4 	magic_number;

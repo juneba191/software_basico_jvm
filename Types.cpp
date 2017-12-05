@@ -57,7 +57,7 @@ void CreateFieldVars(ClassInstance* cinstance) {
 			int desc = fieldToAdd->fields[i].descriptor_index;
 			int name_desc = fieldToAdd->fields[i].name_index; //alterei aqui
 			std::string key((char*)fieldToAdd->constant_pool[name_desc - 1].info.utf8_info.bytes);
-			std::cout<<"\n key "<<key;
+			std::cout << "\n key "<< key << std::endl;
 			(*cinstance->fieldVars)[key] = new Types((char*)fieldToAdd->constant_pool[desc - 1].info.utf8_info.bytes);
 		}
 		if(strcmp(superName, "java/lang/Object") != 0)
