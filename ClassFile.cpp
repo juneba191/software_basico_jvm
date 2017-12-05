@@ -5,8 +5,12 @@
 #include <string>
 #include "Debug.h"
 
+#include "FilePath.h"
+
 ClassFile::ClassFile(std::string nome) {
-    this->nome = std::string(nome);
+    this->nome = std::string(FilePath::GetInstance()->path+nome);
+    
+   Debug(FilePath::GetInstance()->path << nome);
     this->leClasse();
     Debug("Classe lida com sucesso");
 }

@@ -346,7 +346,7 @@ public:
     /*trata a classe totalmente.*/
     void leClasse();
     /*Carrega o caminho do  arquivo para a Classe simplesmente.*/
-    ClassFile(std::string nome);
+    ClassFile( std::string nome);
 private:
     /*leUint32*/
     void readConstantPool();

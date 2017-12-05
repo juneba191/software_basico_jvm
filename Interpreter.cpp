@@ -111,6 +111,7 @@ ClassFile* Interpreter::GetClass(std::string key){
 			break;
 	}
 
+	
 	std::string subkey = key.substr(aux + 1);
 	subkey += ".class";
 
