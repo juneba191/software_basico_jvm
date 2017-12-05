@@ -152,6 +152,8 @@ attribute_info ClassFile::carregarAtributos() {
     }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"Deprecated")) {
         result.info.Deprecated_attribute_info = loadDeprecatedAttributeInfo();
     }else{
+        u1 unknown;
+        readu1FromFile(&unknown, result.attribute_length,arquivo);
         std::cout << this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes << " Atributo Desconhecido\n";
     }
     return result;
@@ -356,13 +358,13 @@ void ClassFile::readConstantPool() {
             case CONSTANT_Long:
                 
                 constant_pool[i].info.long_info = getConstantLongInfo();
-		i++;                
-		break;
+		        i++;                
+		        break;
             case CONSTANT_Double:
                 
                 constant_pool[i].info.double_info = getConstantDoubleInfo();
-		i++;                
-		break;
+		        i++;                
+		        break;
             case CONSTANT_MethodHandle:
                 constant_pool[i].info.methodHandle_info = getConstantMethodHandleInfo();
                 break;

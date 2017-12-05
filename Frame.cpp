@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include "ClassFile.h"
 #include <cstring>
-/*
+/* 
 u1* code is a reference to the code of a method
 u4* pc is the current program counter of a frame
 std::stack<Types*>* operandStack is the current frame's operandStack
@@ -35,71 +35,28 @@ void Frame::SetUp()
 		(*pc)++;
 		operandStack->push(0);
 	};
-	operations[0x02] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// ICONST_M1
-		(*pc)++;
-		Types *tipo = new Types((char *)"I");
-		*tipo->basicRef->T_INT = -1;
-		operandStack->push(tipo);
+#define GENERATE_ICONST_LCONST(opcode, value, instType, instPrefix)                                                                                                \
+	operations[opcode] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) { \
+		(*pc)++;                                                                                                                                                   \
+		Types *tipo = new Types((char *)#instPrefix);                                                                                                              \
+		*tipo->basicRef->instType = value;                                                                                                                         \
+		operandStack->push(tipo);                                                                                                                                  \
 	};
-	operations[0x03] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// ICONST_0
-		(*pc)++;
-		Types *tipo = new Types((char *)"I");
-		operandStack->push(tipo);
-	};
-	operations[0x04] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// ICONST_1
-		(*pc)++;
-		Types *tipo = new Types((char *)"I");
-		*tipo->basicRef->T_INT = 1;
-		operandStack->push(tipo);
-	};
-	operations[0x05] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// ICONST_2
-		(*pc)++;
-		Types *tipo = new Types((char *)"I");
-		*tipo->basicRef->T_INT = 2;
-		operandStack->push(tipo);
-	};
-	operations[0x06] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// ICONST_3
-		(*pc)++;
-		Types *tipo = new Types((char *)"I");
-		*tipo->basicRef->T_INT = 3;
-		operandStack->push(tipo);
-	};
-	operations[0x07] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// ICONST_4
-		(*pc)++;
-		Types *tipo = new Types((char *)"I");
-		*tipo->basicRef->T_INT = 4;
-		operandStack->push(tipo);
-	};
-	operations[0x08] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// ICONST_5
-		(*pc)++;
-		Types *tipo = new Types((char *)"I");
-		*tipo->basicRef->T_INT = 5;
-		operandStack->push(tipo);
-	};
-	operations[0x09] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// LCONST_0
-		(*pc)++;
-		Types *tipo = new Types((char *)"J");
-		operandStack->push(tipo);
-	};
-	operations[0x0a] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
-		// LCONST_1
-		(*pc)++;
-		Types *tipo = new Types((char *)"J");
-		*tipo->basicRef->T_INT = 1;
-		operandStack->push(tipo);
-	};
+
+	GENERATE_ICONST_LCONST(0x02, -1, T_INT, I);
+	GENERATE_ICONST_LCONST(0x03, 0, T_INT, I);
+	GENERATE_ICONST_LCONST(0x04, 1, T_INT, I);
+	GENERATE_ICONST_LCONST(0x05, 2, T_INT, I);
+	GENERATE_ICONST_LCONST(0x06, 3, T_INT, I);
+	GENERATE_ICONST_LCONST(0x07, 4, T_INT, I);
+	GENERATE_ICONST_LCONST(0x08, 5, T_INT, I);
+	GENERATE_ICONST_LCONST(0x09, 0, T_INT, J);
+	GENERATE_ICONST_LCONST(0x0a, 1, T_INT, J); /*TODO talvez seja do tipo long*/
 	operations[0x0b] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
 		// FCONST_0
 		(*pc)++;
 		Types *tipo = new Types((char *)"F");
+		*tipo->basicRef->T_FLOAT = static_cast<u4>(0);
 		operandStack->push(tipo);
 	};
 	operations[0x0c] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
@@ -109,7 +66,7 @@ void Frame::SetUp()
 		u4 aux;
 		memcpy(&aux, &pFlut, sizeof(u4));
 		Types *tipo = new Types((char *)"F");
-		*tipo->basicRef->T_FLOAT = aux;
+		*tipo->basicRef->T_FLOAT = static_cast<u4>(1);
 		operandStack->push(tipo);
 	};
 	operations[0x0d] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
@@ -119,7 +76,8 @@ void Frame::SetUp()
 		u4 aux;
 		memcpy(&aux, &pFlut, sizeof(u4));
 		Types *tipo = new Types((char *)"F");
-		*tipo->basicRef->T_FLOAT = aux;
+		*tipo->basicRef->T_FLOAT = static_cast<u4>(2);
+
 		operandStack->push(tipo);
 	};
 	operations[0x0e] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
