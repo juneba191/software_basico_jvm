@@ -59,6 +59,12 @@ int main(int argc, char *argv[])
 		sm.ExecuteMusic(1);
 				
 	}else{
+		cout << "Parametro "<< modo <<" desconhecido.\n" << endl;
+		cout << "-e: interpreta a classe \n";
+		cout << "-l: imprime a classe no terminal \n";
+		cout << "-cruzeirohino: exibe a bandeira do cruzeiro e hino em wav\n";
+		cout << "-cruzeirobeep: exibe a bandeira do cruzeiro e hino em beep\n";
+		
 		exit(1);
 	}
     return 0;
