@@ -27,7 +27,7 @@ void CreateMultiArray(ArrayType *array, std::string type, std::stack<int> counte
 void Frame::SetUp()
 {
 
-	operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
 		// NOP
 		(*pc)++;
 	};
@@ -36,28 +36,71 @@ void Frame::SetUp()
 		(*pc)++;
 		operandStack->push(0);
 	};
-#define GENERATE_ICONST_LCONST(opcode, value, instType, instPrefix)                                                                                                \
-	operations[opcode] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) { \
-		(*pc)++;                                                                                                                                                   \
-		Types *tipo = new Types((char *)#instPrefix);                                                                                                              \
-		*tipo->basicRef->instType = value;                                                                                                                         \
-		operandStack->push(tipo);                                                                                                                                  \
+	operations[0x02] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ICONST_M1
+		(*pc)++;
+		Types *tipo = new Types((char *)"I");
+		*tipo->basicRef->T_INT = -1;
+		operandStack->push(tipo);
 	};
-
-	GENERATE_ICONST_LCONST(0x02, -1, T_INT, I);
-	GENERATE_ICONST_LCONST(0x03, 0, T_INT, I);
-	GENERATE_ICONST_LCONST(0x04, 1, T_INT, I);
-	GENERATE_ICONST_LCONST(0x05, 2, T_INT, I);
-	GENERATE_ICONST_LCONST(0x06, 3, T_INT, I);
-	GENERATE_ICONST_LCONST(0x07, 4, T_INT, I);
-	GENERATE_ICONST_LCONST(0x08, 5, T_INT, I);
-	GENERATE_ICONST_LCONST(0x09, 0, T_INT, J);
-	GENERATE_ICONST_LCONST(0x0a, 1, T_INT, J); /*TODO talvez seja do tipo long*/
+	operations[0x03] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ICONST_0
+		(*pc)++;
+		Types *tipo = new Types((char *)"I");
+		operandStack->push(tipo);
+	};
+	operations[0x04] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ICONST_1
+		(*pc)++;
+		Types *tipo = new Types((char *)"I");
+		*tipo->basicRef->T_INT = 1;
+		operandStack->push(tipo);
+	};
+	operations[0x05] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ICONST_2
+		(*pc)++;
+		Types *tipo = new Types((char *)"I");
+		*tipo->basicRef->T_INT = 2;
+		operandStack->push(tipo);
+	};
+	operations[0x06] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ICONST_3
+		(*pc)++;
+		Types *tipo = new Types((char *)"I");
+		*tipo->basicRef->T_INT = 3;
+		operandStack->push(tipo);
+	};
+	operations[0x07] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ICONST_4
+		(*pc)++;
+		Types *tipo = new Types((char *)"I");
+		*tipo->basicRef->T_INT = 4;
+		operandStack->push(tipo);
+	};
+	operations[0x08] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ICONST_5
+		(*pc)++;
+		Types *tipo = new Types((char *)"I");
+		*tipo->basicRef->T_INT = 5;
+		operandStack->push(tipo);
+	};
+	operations[0x09] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LCONST_0
+		(*pc)++;
+		Types *tipo = new Types((char *)"J");
+		operandStack->push(tipo);
+	};
+	operations[0x0a] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LCONST_1
+		(*pc)++;
+		Types *tipo = new Types((char *)"J");
+		*tipo->basicRef->T_INT = 1;
+		operandStack->push(tipo);
+	};
 	operations[0x0b] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
 		// FCONST_0
 		(*pc)++;
 		Types *tipo = new Types((char *)"F");
-		*tipo->basicRef->T_FLOAT = static_cast<u4>(0);
 		operandStack->push(tipo);
 	};
 	operations[0x0c] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
@@ -67,7 +110,7 @@ void Frame::SetUp()
 		u4 aux;
 		memcpy(&aux, &pFlut, sizeof(u4));
 		Types *tipo = new Types((char *)"F");
-		*tipo->basicRef->T_FLOAT = static_cast<u4>(1);
+		*tipo->basicRef->T_FLOAT = aux;
 		operandStack->push(tipo);
 	};
 	operations[0x0d] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
@@ -77,8 +120,7 @@ void Frame::SetUp()
 		u4 aux;
 		memcpy(&aux, &pFlut, sizeof(u4));
 		Types *tipo = new Types((char *)"F");
-		*tipo->basicRef->T_FLOAT = static_cast<u4>(2);
-
+		*tipo->basicRef->T_FLOAT = aux;
 		operandStack->push(tipo);
 	};
 	operations[0x0e] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
@@ -225,144 +267,505 @@ void Frame::SetUp()
 		}
 		operandStack->push(tipo);
 	};
-
-#define GENERATE_LOADS(opcode, instType, instSufix, value)                                                                                                         \
-	operations[opcode] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) { \
-		(*pc)++;                                                                                                                                                   \
-		if (value >= 0 and #instType == "I")                                                                                                                       \
-		{                                                                                                                                                          \
-			Types *toAdd = copyTypes(locals->at(value));                                                                                                           \
-			operandStack->push(toAdd);                                                                                                                             \
-		}                                                                                                                                                          \
-		else if (value >= 0)                                                                                                                                       \
-		{                                                                                                                                                          \
-			operandStack->push(locals->at(value));                                                                                                                 \
-		}                                                                                                                                                          \
-		else                                                                                                                                                       \
-		{                                                                                                                                                          \
-			u1 index = *(code + (*pc));                                                                                                                            \
-			(*pc)++;                                                                                                                                               \
-			operandStack->push(locals->at(index));                                                                                                                 \
-		};                                                                                                                                                         \
+	operations[0x15] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ILOAD
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		operandStack->push(locals->at(index));
 	};
-
-	/* gera todos os loads o value de -1 define que é pra adicionar o operando direto na pilha de locais*/
-	GENERATE_LOADS(0x15, I, LOAD, -1) // ILOAD
-	GENERATE_LOADS(0x16, L, LOAD, -1) // LLOAD
-	GENERATE_LOADS(0x17, F, LOAD, -1) // FLOAD
-	GENERATE_LOADS(0x18, D, LOAD, -1) // DLOAD
-	GENERATE_LOADS(0x19, A, LOAD, -1) // ALOAD
-
-	GENERATE_LOADS(0x1a, I, LOAD, 0) // ILOAD_0
-	GENERATE_LOADS(0x1b, I, LOAD, 1) // ILOAD_1
-	GENERATE_LOADS(0x1c, I, LOAD, 2) // ILOAD_2
-	GENERATE_LOADS(0x1d, I, LOAD, 3) // ILOAD_3
-
-	GENERATE_LOADS(0x1e, L, LOAD, 0) // LLOAD_0
-	GENERATE_LOADS(0x1f, L, LOAD, 1) // LLOAD_1
-	GENERATE_LOADS(0x20, L, LOAD, 2) // LLOAD_2
-	GENERATE_LOADS(0x21, L, LOAD, 3) // LLOAD_3
-
-	GENERATE_LOADS(0x22, F, LOAD, 0) // FLOAD_0
-	GENERATE_LOADS(0x23, F, LOAD, 1) // FLOAD_1
-	GENERATE_LOADS(0x24, F, LOAD, 2) // FLOAD_2
-	GENERATE_LOADS(0x25, F, LOAD, 3) // FLOAD_3
-
-	GENERATE_LOADS(0x26, D, LOAD, 0) // DLOAD_0
-	GENERATE_LOADS(0x27, D, LOAD, 1) // DLOAD_1
-	GENERATE_LOADS(0x28, D, LOAD, 2) // DLOAD_2
-	GENERATE_LOADS(0x29, D, LOAD, 3) // DLOAD_3
-
-	GENERATE_LOADS(0x2a, A, LOAD, 0) // ALOAD_0
-	GENERATE_LOADS(0x2b, A, LOAD, 1) // ALOAD_1
-	GENERATE_LOADS(0x2c, A, LOAD, 2) // ALOAD_2
-	GENERATE_LOADS(0x2d, A, LOAD, 3) // ALOAD_3
-
-#define GENERATE_ALOADS(opcode, instType, instSufix, value)                                                                                                        \
-	operations[opcode] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) { \
-		(*pc)++;                                                                                                                                                   \
-		Types *index = operandStack->top();                                                                                                                        \
-		operandStack->pop();                                                                                                                                       \
-		Types *arrayR = operandStack->top();                                                                                                                       \
-		operandStack->pop();                                                                                                                                       \
-		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));                                                                                  \
+	operations[0x16] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LLOAD
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		operandStack->push(locals->at(index));
 	};
-
-	GENERATE_ALOADS(0x2e, A, ALOAD, 0) // IALOAD
-	GENERATE_ALOADS(0x2f, L, ALOAD, 0) // LALOAD
-	GENERATE_ALOADS(0x30, F, ALOAD, 0) // FALOAD
-	GENERATE_ALOADS(0x31, D, ALOAD, 0) // DALOAD
-	GENERATE_ALOADS(0x32, A, ALOAD, 0) // AALOAD
-	GENERATE_ALOADS(0x33, B, ALOAD, 0) // BALOAD
-	GENERATE_ALOADS(0x34, C, ALOAD, 0) // CALOAD
-	GENERATE_ALOADS(0x35, S, ALOAD, 0) // SALOAD
-
-#define GENERATE_STORES(opcode, instType, instSufix, newVal)                                                                                                       \
-	operations[opcode] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) { \
-		(*pc)++;                                                                                                                                                   \
-		Types *value = operandStack->top();                                                                                                                        \
-		operandStack->pop();                                                                                                                                       \
-		if (newVal >= 0)                                                                                                                                           \
-		{                                                                                                                                                          \
-			locals->at(newVal) = value;                                                                                                                            \
-		}                                                                                                                                                          \
-		else if (newVal == -2 || newVal == -3)                                                                                                                     \
-		{                                                                                                                                                          \
-			Types *index = operandStack->top();                                                                                                                    \
-			operandStack->pop();                                                                                                                                   \
-			Types *arrayR = operandStack->top();                                                                                                                   \
-			operandStack->pop();                                                                                                                                   \
-			if (newVal == -3)                                                                                                                                      \
-			{                                                                                                                                                      \
-				arrayR->arrayRef->array->at(*index->basicRef->T_INT)->arrayRef->array = value->arrayRef->array;                                                    \
-			}                                                                                                                                                      \
-			else                                                                                                                                                   \
-			{                                                                                                                                                      \
-				arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->instType = value->basicRef->instType;                                            \
-			}                                                                                                                                                      \
-		}                                                                                                                                                          \
-		else                                                                                                                                                       \
-		{                                                                                                                                                          \
-			u1 index = *(code + (*pc));                                                                                                                            \
-			(*pc)++;                                                                                                                                               \
-			locals->at(index) = value;                                                                                                                             \
-		}                                                                                                                                                          \
+	operations[0x17] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FLOAD
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		operandStack->push(locals->at(index));
 	};
+	operations[0x18] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DLOAD
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		operandStack->push(locals->at(index));
+	};
+	operations[0x19] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ALOAD
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		operandStack->push(locals->at(index));
 
-	GENERATE_STORES(0x36, T_INT, STORE, -1)	// ISTORE
-	GENERATE_STORES(0x37, T_LONG, STORE, -1)   // LSTORE
-	GENERATE_STORES(0x38, T_FLOAT, STORE, -1)  // FSTORE
-	GENERATE_STORES(0x39, T_DOUBLE, STORE, -1) // DSTORE
-	GENERATE_STORES(0x3a, T_INT, STORE, -1)	// ASTORE
-	GENERATE_STORES(0x3b, T_INT, STORE, 0)	 // ISTORE_0
-	GENERATE_STORES(0x3c, T_INT, STORE, 1)	 // ISTORE_1
-	GENERATE_STORES(0x3d, T_INT, STORE, 2)	 // ISTORE_2
-	GENERATE_STORES(0x3e, T_INT, STORE, 3)	 // ISTORE_3
-	GENERATE_STORES(0x3f, T_LONG, STORE, 0)	// LSTORE_0
-	GENERATE_STORES(0x40, T_LONG, STORE, 1)	// LSTORE_1
-	GENERATE_STORES(0x41, T_LONG, STORE, 2)	// LSTORE_2
-	GENERATE_STORES(0x42, T_LONG, STORE, 3)	// LSTORE_3
-	GENERATE_STORES(0x43, T_FLOAT, STORE, 0)   // FSTORE_0
-	GENERATE_STORES(0x44, T_FLOAT, STORE, 1)   // FSTORE_1
-	GENERATE_STORES(0x45, T_FLOAT, STORE, 2)   // FSTORE_2
-	GENERATE_STORES(0x46, T_FLOAT, STORE, 3)   // FSTORE_3
-	GENERATE_STORES(0x47, T_DOUBLE, STORE, 0)  // DSTORE_0
-	GENERATE_STORES(0x48, T_DOUBLE, STORE, 1)  // DSTORE_1
-	GENERATE_STORES(0x49, T_DOUBLE, STORE, 2)  // DSTORE_2
-	GENERATE_STORES(0x4a, T_DOUBLE, STORE, 3)  // DSTORE_3
-	GENERATE_STORES(0x4b, T_INT, STORE, 0)	 // ASTORE_0
-	GENERATE_STORES(0x4c, T_INT, STORE, 1)	 // ASTORE_1
-	GENERATE_STORES(0x4d, T_INT, STORE, 2)	 // ASTORE_2
-	GENERATE_STORES(0x4e, T_INT, STORE, 3)	 // ASTORE_3
+	};
+	operations[0x1A] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ILOAD_0
+		(*pc)++;
+		Types *toAdd = copyTypes(locals->at(0));
+		operandStack->push(toAdd);
+	};
+	operations[0x1B] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ILOAD_1
+		(*pc)++;
+		Types *toAdd = copyTypes(locals->at(1));
+		operandStack->push(toAdd);
+	};
+	operations[0x1C] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ILOAD_2
+		(*pc)++;
+		Types *toAdd = copyTypes(locals->at(2));
+		operandStack->push(toAdd);
+	};
+	operations[0x1D] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ILOAD_3
+		(*pc)++;
+		Types *toAdd = copyTypes(locals->at(3));
+		operandStack->push(toAdd);
+	};
+	operations[0x1E] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LLOAD_0
+		(*pc)++;
+		operandStack->push(locals->at(0));
+	};
+	operations[0x1F] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LLOAD_1
+		(*pc)++;
+		operandStack->push(locals->at(1));
+	};
+	operations[0x20] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LLOAD_2
+		(*pc)++;
+		operandStack->push(locals->at(2));
+	};
+	operations[0x21] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LLOAD_3
+		(*pc)++;
+		operandStack->push(locals->at(3));
+	};
+	operations[0x22] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FLOAD_0
+		(*pc)++;
+		operandStack->push(locals->at(0));
+	};
+	operations[0x23] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FLOAD_1
+		(*pc)++;
+		operandStack->push(locals->at(1));
+	};
+	operations[0x24] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FLOAD_2
+		(*pc)++;
+		operandStack->push(locals->at(2));
+	};
+	operations[0x25] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FLOAD_3
+		(*pc)++;
+		operandStack->push(locals->at(3));
+	};
+	operations[0x26] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DLOAD_0
+		(*pc)++;
+		operandStack->push(locals->at(0));
+	};
+	operations[0x27] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DLOAD_1
+		(*pc)++;
+		operandStack->push(locals->at(1));
+	};
+	operations[0x28] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DLOAD_2
+		(*pc)++;
+		operandStack->push(locals->at(2));
+	};
+	operations[0x29] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DLOAD_3
+		(*pc)++;
+		operandStack->push(locals->at(3));
+	};
+	operations[0x2A] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ALOAD_0
+		(*pc)++;
+		operandStack->push(locals->at(0));
+	};
+	operations[0x2B] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ALOAD_1
+		(*pc)++;
+		operandStack->push(locals->at(1));
+	};
+	operations[0x2C] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ALOAD_2
+		(*pc)++;
+		operandStack->push(locals->at(2));
+	};
+	operations[0x2D] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ALOAD_3
+		(*pc)++;
+		operandStack->push(locals->at(3));
+	};
+	operations[0x2E] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// IALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		//std::cout << *arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_INT << std::endl;
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
 
-	GENERATE_STORES(0x4f, T_INT, ASTORE, -2)	 // IASTORE
-	GENERATE_STORES(0x50, T_LONG, ASTORE, -2)	// LASTORE
-	GENERATE_STORES(0x51, T_FLOAT, ASTORE, -2)   // FASTORE
-	GENERATE_STORES(0x52, T_DOUBLE, ASTORE, -2)  // DASTORE
-	GENERATE_STORES(0x53, T_INT, ASTORE, -3)	 // AASTORE  /*Definido -3 como controle*/
-	GENERATE_STORES(0x54, T_BOOLEAN, ASTORE, -2) // BASTORE
-	GENERATE_STORES(0x55, T_CHAR, ASTORE, -2)	// CASTORE
-	
+	};
+	operations[0x2F] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
+	};
+	operations[0x30] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
+	};
+	operations[0x31] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
+	};
+	operations[0x32] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// AALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
+	};
+	operations[0x33] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// BALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
+	};
+	operations[0x34] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// CALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
+	};
+	operations[0x35] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// SALOAD
+		(*pc)++;
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		operandStack->push(arrayR->arrayRef->array->at(*index->basicRef->T_INT));
+	};
+	operations[0x36] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ISTORE
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		Types *value = new Types((char *)"I");
+		*value->basicRef->T_INT = *operandStack->top()->basicRef->T_INT;
+		operandStack->pop();
+		locals->at(index) = value;
+	};
+	operations[0x37] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LSTORE
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(index) = value;
+	};
+	operations[0x38] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FSTORE
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(index) = value;
+	};
+	operations[0x39] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DSTORE
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		;
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(index) = value;
+	};
+	operations[0x3A] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ASTORE
+		(*pc)++;
+		u1 index = *(code + (*pc));
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(index) = value;
+	};
+	operations[0x3B] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ISTORE_0
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(0) = value;
+	};
+	operations[0x3C] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ISTORE_1
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(1) = value;
+	};
+	operations[0x3D] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ISTORE_2
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(2) = value;
+	};
+	operations[0x3E] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ISTORE_3
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(3) = value;
+	};
+	operations[0x3F] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LSTORE_0
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(0) = value;
+	};
+	operations[0x40] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LSTORE_1
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(1) = value;
+	};
+	operations[0x41] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LSTORE_2
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(2) = value;
+	};
+	operations[0x42] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LSTORE_3
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(3) = value;
+	};
+	operations[0x43] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FSTORE_0
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(0) = value;
+	};
+	operations[0x44] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FSTORE_1
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(1) = value;
+	};
+	operations[0x45] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FSTORE_2
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(2) = value;
+	};
+	operations[0x46] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FSTORE_3
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(3) = value;
+	};
+	operations[0x47] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DSTORE_0
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(0) = value;
+	};
+	operations[0x48] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DSTORE_1
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(1) = value;
+	};
+	operations[0x49] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DSTORE_2
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(2) = value;
+	};
+	operations[0x4A] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DSTORE_3
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(3) = value;
+	};
+	operations[0x4B] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ASTORE_0
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(0) = value;
+	};
+	operations[0x4C] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ASTORE_1
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(1) = value;
+	};
+	operations[0x4D] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ASTORE_2
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(2) = value;
+	};
+	operations[0x4E] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// ASTORE_3
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		locals->at(3) = value;
+	};
+	operations[0x4F] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// IASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		Types *asuha = new Types((char *)"I");
+		*asuha->basicRef->T_INT = *value->basicRef->T_INT;
+
+		arrayR->arrayRef->array->at(*index->basicRef->T_INT) = asuha;
+		int a = 0;
+		return;
+	};
+	operations[0x50] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// LASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_LONG = *value->basicRef->T_LONG;
+		int a = 0;
+	};
+	operations[0x51] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// FASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_FLOAT = *value->basicRef->T_FLOAT;
+		int a = 0;
+	};
+	operations[0x52] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// DASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_DOUBLE = *value->basicRef->T_DOUBLE;
+		int a = 0;
+	};
+	operations[0x53] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// AASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		arrayR->arrayRef->array->at(*index->basicRef->T_INT)->arrayRef->array = value->arrayRef->array;
+	};
+	operations[0x54] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// BASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_BOOLEAN = *value->basicRef->T_BOOLEAN;
+	};
+	operations[0x55] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// CASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_CHAR = *value->basicRef->T_CHAR;
+	};
+	operations[0x56] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
+		// SASTORE
+		(*pc)++;
+		Types *value = operandStack->top();
+		operandStack->pop();
+		Types *index = operandStack->top();
+		operandStack->pop();
+		Types *arrayR = operandStack->top();
+		operandStack->pop();
+		Types *pequeno = new Types((char *)"S");
+		*pequeno->basicRef->T_SHORT = (u2)*value->basicRef->T_INT;
+		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_SHORT = *pequeno->basicRef->T_SHORT;
+	};	
 	operations[0x57] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
 		// POP
 		(*pc)++;
