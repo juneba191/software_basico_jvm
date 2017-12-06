@@ -20,7 +20,12 @@ int main(int argc, char *argv[])
 	string modo;
 	
 	if (argc < 3){
-		cin >> nome >> modo;
+		cout << "Executar pelo terminal: diretorio\\classe.class -e / -l / -cruzeirohino / -cruzeirobeep\n";
+		cout << "-e: interpreta a classe \n";
+		cout << "-l: imprime a classe no terminal \n";
+		cout << "-cruzeirohino: exibe a bandeira do cruzeiro e hino em wav\n";
+		cout << "-cruzeirobeep: exibe a bandeira do cruzeiro e hino em beep\n";
+		exit(1);
 	} else {
 		nome = argv[1];
 		modo = argv[2];
@@ -40,19 +45,21 @@ int main(int argc, char *argv[])
     	Interpreter::GetInstance()->AddClass(classFile);
     	Frame::SetUp();
     	Interpreter::GetInstance()->Run(classFile);
-	}else if(modo == "-cruzeiro"){
+	}else if(modo == "-cruzeirohino"){
 		system("COLOR F1");
 		header();
-		cout << "Digite 1 para beep e digite 2 para wav: \n";
-		int opc;
-		cin >> opc;
 		
-		if(opc == 1){
-			SoundManager sm(100);
-			sm.ExecuteMusic(1);
-		}else{
-			PlaySound(TEXT("song.wav"), NULL, SND_FILENAME | SND_SYNC);
-		}
+		PlaySound(TEXT("song.wav"), NULL, SND_FILENAME | SND_SYNC);
+		
+	}else if(modo == "-cruzeirobeep"){
+		system("COLOR F1");
+		header();
+	
+		SoundManager sm(100);
+		sm.ExecuteMusic(1);
+				
+	}else{
+		exit(1);
 	}
     return 0;
 }
