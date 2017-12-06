@@ -28,6 +28,8 @@
 *.la
 *.a
 *.lib
+*.win
+
 
 # Executables
 *.exe
