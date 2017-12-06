@@ -4,10 +4,10 @@
 
 #ifndef SOFTWAREBASICOJVM_DEBUG_H
 #define SOFTWAREBASICOJVM_DEBUG_H
-#define USEDEBUG 1
+#define USEDEBUG 0
 
 #ifdef USEDEBUG
-#define Debug(x) std::cout << "Debug: " << x << "\n"
+#define Debug(x)
 #else
 #define Debug(x)
 

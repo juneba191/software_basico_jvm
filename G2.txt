@@ -1,0 +1,81 @@
+Data: 06/12/2017
+Horario inicio: 15:10
+Horario final
+Grupo: 2
+
+
+** Defesa (100)
+   Componente 1 - Gabriel Araujo
+   Componente 2 - Isaac
+   Componente 3 - Luiz
+   Componente 4 - Vinicius
+   Componente 5 - Wagner
+
+-------------------------
+** Corretude do interpretador 
+
+Resumo: 100
+
+() arrays simples
+() array.length
+() inteiros  
+() floats
+() desvios com cat 1 
+() recursao
+() metodos estaticos:  
+() operacoes de retorno
+() operacoes logicas com cat 1  
+() operacoes de deslocamento com cat 1 
+() operacoes de manipulacao de pilha
+() iteracao e case
+() arrays multidimensionais
+() arrays de referencia
+() objetos: 
+() metodos nao estaticos: 
+() longs
+() doubles
+() operacoes aritmeticas de cat 2 
+() operacoes de deslocamento de longs
+() system.out.println (int, float, string e booleano)
+() conversao de e para cat 2
+() strings
+() interfaces
+() consistencia
+() shorts
+() exceptions
+
+-- leitura do formato ponto class:
+- Trata versões superiores? 
+- Despreza silenciosamente atributos não tratados? não
+- Consistência? não diferencia maiusculas, testa assinatura
+- Corretude.
+- Exibe mnemônicos? sim mas não apresenta redireção das entradas no CP
+- Apresenta reindireção das entradas no Constant Pool? sim
+
+- apresentaram o hino do Cruzeiro!
+- 
+
+resumo: 100
+
+--  opcionais (bonus de 10% sobre a corretude do interpretador)
+Todas as demais instruções. Também será considerada a simulação de operações que envolvam chamada aos recursos do sistema operacional, tais como impressão, etc.
+
+
+( ) threads
+( ) debug
+( ) chamadas às bibliotecas do Java
+( ) checagem dinâmica de tipos
+( ) coletor de lixo.
+
+---------
+
+
+Atribuição de nota para o interpretador
+0,4*corretude + 0,4*defesa do interpretador + 0,2*site
+
+Site: 100 
+
+- Apresenta o DCM e a descrição de cada função?
+- Contem a relação das estruturas de dados e os arquivos?
+- Está atualizado?
+- Corretude

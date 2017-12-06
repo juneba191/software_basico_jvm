@@ -22,9 +22,12 @@ float SoundManager::TempoUnidade(){
 }
 
 void SoundManager::ExecuteNote(string note, float tempo, float oitava){
+	if(!mute){
 	
 	//printf("%s%d ==> %.2f\n", note.data() , 2 + (int)oitava, tempo*TempoUnidade()/1000);
 	Beep(notes[note]*oitava, tempo*TempoUnidade());
+	}
+	
 }
 
 
@@ -39,6 +42,8 @@ void SoundManager::Pause(float tempo){
 
 
 void SoundManager::ExecuteMusic(int loop){
+
+	
 	while(loop){
 	
 	ExecuteNote("F", 1.5, 1);
@@ -320,4 +325,6 @@ void SoundManager::ExecuteMusic(int loop){
 	ExecuteNote("G#", 2, 1);
 }
 }
+
+
 

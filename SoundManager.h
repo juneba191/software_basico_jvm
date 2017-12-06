@@ -21,6 +21,7 @@ class SoundManager {
 		void ExecuteNote(string note, float tempo, float oitava);
 		void Pause(float tempo);
 	public:
+		int mute;
 		SoundManager(int BPM);
 		void ExecuteMusic(int loop);
 };

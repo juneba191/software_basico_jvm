@@ -962,7 +962,6 @@ void Screen_Print_Javap_Format(ClassFile &classFile){
 		case(0x34): std::cout << "  major version: Java SE 8"<< std::endl; break;
 		case(0x35): std::cout << "  major version: Java SE 9"<< std::endl; break;
 	}
-    //std::cout << "  major version: " << classFile.major_version << std::endl;
     
 
     std::cout << "  flags: ";
@@ -1002,12 +1001,6 @@ void Screen_Print_Javap_Format(ClassFile &classFile){
     }
 
     std::cout << std::endl << "{" << std::endl;
-    
-    /******************************************************************************************
-    *	PRINT FIELDS                                                                          *
-    *	AQUI 																				  *
-    *																						  *
-    ******************************************************************************************/
     for(int i=0; i<classFile.field_count; i++){
         field_info field = (classFile.fields[i]);
 
@@ -1035,11 +1028,6 @@ void Screen_Print_Javap_Format(ClassFile &classFile){
 		std::cout << std::endl;
 		
     }
-    /******************************************************************************************
-    *	PRINT MÉTODOS                                                                         *
-    *	AQUI 																				  *
-    *																						  *
-    ******************************************************************************************/
     //Loop para printar os m�todos
     for(u2 i = 0; i < classFile.methods_count; i++){
         MethodInfo method = (classFile.methods[i]);
@@ -1068,12 +1056,6 @@ void Screen_Print_Javap_Format(ClassFile &classFile){
 
     std::cout << "}" << std::endl << std::endl;
     
-
-    /******************************************************************************************
-    *	PRINTAR ATTRIBUTES                                                                    *
-    *	AQUI 																				  *
-    *																						  *
-    ******************************************************************************************/
     for(int i = 0; i < classFile.attributes_count; i++){
         std::cout << "Atributo " << i+1;
         
@@ -1087,8 +1069,6 @@ void Screen_Print_Javap_Format(ClassFile &classFile){
 void ScreenPrintCodeAttribute(attribute_info *ai, cp_info * cp){
     std::cout << "stack=" << ai->info.code_info.max_stack << ", locals=" << ai->info.code_info.max_locals
               << "\t// Code length: " << ai->info.code_info.code_length << std::endl;
-    
-        //ai->info.code_info->max_stack,ai->info.code_info->max_locals, ai->info.code_info->code_length);
 
 	for (int i = 0; (u4) i < ai->info.code_info.code_length; i++) {
 		screen_print_function[ai->info.code_info.code[i]](ai->info.code_info.code, &i);

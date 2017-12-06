@@ -55,13 +55,15 @@ void CreateFieldVars(ClassInstance* cinstance) {
 	do {
 		for (int i = 0; i < fieldToAdd->field_count; i++) {
 			int desc = fieldToAdd->fields[i].descriptor_index;
-			int name_desc = fieldToAdd->fields[i].name_index; //alterei aqui
+			int name_desc = fieldToAdd->fields[i].name_index; 
 			std::string key((char*)fieldToAdd->constant_pool[name_desc - 1].info.utf8_info.bytes);
-			std::cout << "\n key "<< key << std::endl;
 			(*cinstance->fieldVars)[key] = new Types((char*)fieldToAdd->constant_pool[desc - 1].info.utf8_info.bytes);
 		}
-		if(strcmp(superName, "java/lang/Object") != 0)
+		if(strcmp(superName, "java/lang/Object") != 0){
 			fieldToAdd = Interpreter::GetInstance()->GetClass(superName);
+			 superName = (char*)fieldToAdd->constant_pool[fieldToAdd->constant_pool[fieldToAdd->super_class - 1].info.class_info.name_index - 1].info.utf8_info.bytes;
+		}
+			
 	} while (strcmp(superName, "java/lang/Object"));
 }
 
@@ -158,10 +160,10 @@ Types* copyTypes(Types* type) {
 		std::string aux = "L";
 		Cp_Info* cpool = type->classInstance->classDescription->constant_pool + type->classInstance->classDescription->this_class - 1;
 		while (cpool->tag != 1) {
-			cpool = type->classInstance->classDescription->constant_pool + cpool->info.class_info.name_index - 1;//alteri aqui
+			cpool = type->classInstance->classDescription->constant_pool + cpool->info.class_info.name_index - 1;
 
 		}
-		aux += std::string((char*)cpool->info.utf8_info.bytes); //alterei aqui
+		aux += std::string((char*)cpool->info.utf8_info.bytes); 
 		tipo = new Types((char*)aux.c_str());
 	}
 		break;

@@ -9,7 +9,6 @@
 Interpreter* Interpreter::instance = NULL;
 
 Interpreter::Interpreter(){
-	Debug("Criou Interpreter");
 }
 
 Interpreter* Interpreter::GetInstance(){
@@ -73,7 +72,7 @@ void Interpreter::AddClass(ClassFile* cFile){
 	}; 
 	int i = cFile->constant_pool[cFile->this_class - 1].info.class_info.name_index;
 	char* aux;
-	aux = (char*)malloc(cFile->constant_pool[i - 1].info.utf8_info.length * sizeof(char) * 2); // alterei as 3 linhas abaixo
+	aux = (char*)malloc(cFile->constant_pool[i - 1].info.utf8_info.length * sizeof(char) * 2);
 	int j;
 	for (j = cFile->constant_pool[i - 1].info.utf8_info.length - 1; j >= 0; j--) {
 		if (cFile->constant_pool[i - 1].info.utf8_info.bytes[j] == '/')
@@ -85,14 +84,10 @@ void Interpreter::AddClass(ClassFile* cFile){
 	std::string key(aux);
 	key += ".class";
 	
-	//std::cout << key << std::endl;
 	loadedClasses[key] = cFile;
 	ClassInstance* staticInstance;
-	//std::cout << key << std::endl;
 	for (i = 0; i < cFile->field_count; i++) {
 		if ((cFile->fields[i].access_flags & 0x8) != 0) {
-			std::cout<<"teste";
-
 			staticInstance = (ClassInstance*)malloc(sizeof(ClassInstance));
 			staticInstance->classDescription = cFile;
 			CreateFieldVars(staticInstance);
@@ -116,13 +111,10 @@ ClassFile* Interpreter::GetClass(std::string key){
 	subkey += ".class";
 
 	ClassFile* aux2 = loadedClasses[subkey];
-	//If not loaded load class
 	if(aux == 0){
 		aux2 = new ClassFile(subkey);
 		AddClass(aux2);
-		//loadedClasses[subkey] = aux2;
 	}
-	//std::cout << subkey << std::endl;
 	return aux2;
 }
 
@@ -142,10 +134,7 @@ ClassFile* Interpreter::GetClass(const char* key){
 	if(aux == NULL){
 		aux = new ClassFile(keystring);
 		AddClass(aux);
-		//loadedClasses[keystring] = aux;
 	}
-
-	//std::cout << keystring << std::endl;
 	return aux;
 }
 
