@@ -109,7 +109,6 @@ void ClassFile::readFields() {
 
     for (u2 i = 0 ; i < this->field_count ; i++)
     {
-        /*o que acontece se eu fizer readu2FromFile(&this->fields, 4, arquivo)?*/
         readu2FromFile(&this->fields[i].access_flags, 1, arquivo);
         readu2FromFile(&this->fields[i].name_index, 1, arquivo);
         readu2FromFile(&this->fields[i].descriptor_index, 1, arquivo);
@@ -118,15 +117,13 @@ void ClassFile::readFields() {
         this->fields[i].attributes = (attribute_info*)malloc(sizeof(attribute_info)*this->fields[i].attributes_count);
         for (u2 j = 0 ; j < this->fields[i].attributes_count; j++)
         {
-            this->fields[i].attributes[j] = carregarAtributos(); //todo aqui
+            this->fields[i].attributes[j] = carregarAtributos(); 
         }
     }
 }
-// vai na tabela de constant pool que ja foi carregada, e carrega
-// os dados.
 
 CONSTANT_Utf8_info ClassFile::pegaUtf8ConstantPool(u2 index) {
-    // não testado.
+
     cp_info teste = this->constant_pool[index-1];
     return teste.info.utf8_info;
 }
@@ -204,7 +201,6 @@ LineNumberTable_attributes ClassFile::loadNumberTableAttribute() {
 
 
 SourceFile_attribute ClassFile::loadSourceFileAttribute() {
-    //testar
     SourceFile_attribute info;
     readu2FromFile(&info.sourcefile_index, 1, arquivo);
 
@@ -243,9 +239,6 @@ Exceptions_attribute ClassFile::loadExceptionAttribute() {
 
 Code_attributes ClassFile::loadCodeAttribute() {
     Code_attributes result;
-    /*Nao tem mais name_index nem attr length*/
-    // readu2FromFile(&result.attribute_name_index, 1, arquivo);
-    // readu4FromFile(&result.attribute_length, 1, arquivo);
     readu2FromFile(&result.max_stack, 1, arquivo);
     readu2FromFile(&result.max_locals, 1, arquivo);
     readu4FromFile(&result.code_length, 1, arquivo);
@@ -280,7 +273,7 @@ ConstantValue_attribute ClassFile::loadConstantValueAttribute() {
     readu2FromFile(&result.attribute_name_index, 1, arquivo);
     readu4FromFile(&result.attribute_length, 1, arquivo);
     readu2FromFile(&result.constantvalue_index, 1, arquivo);
-    return result;//faltava isso né pai.
+    return result;
 }
 
 void ClassFile::readFieldsCount() {
@@ -319,8 +312,7 @@ void ClassFile::readConstantPool() {
     for(u2 i = 0 ; i < tamPool ;i++)
     {
         readu1FromFile(&this->constant_pool[i].tag, 1, arquivo);
-        //
-        //std::cout << tag;
+
         switch(constant_pool[i].tag)
         {
             case CONSTANT_Class:
@@ -397,7 +389,6 @@ CONSTANT_Double_info ClassFile::getConstantDoubleInfo() {
 
 
 CONSTANT_Long_info ClassFile::getConstantLongInfo() {
-    //não testado.
     CONSTANT_Long_info result;
     readu8FromFile(&result.value, 1, arquivo);
     return result;
@@ -406,7 +397,6 @@ CONSTANT_Long_info ClassFile::getConstantLongInfo() {
 
 
 CONSTANT_Float_info ClassFile::getConstantFloatInfo() {
-    //não testado
     CONSTANT_Float_info result;
     readu4FromFile(&result.bytes, 1, arquivo);
 
@@ -416,7 +406,6 @@ CONSTANT_Float_info ClassFile::getConstantFloatInfo() {
 
 
 CONSTANT_Integer_info ClassFile::getConstantIntegerInfo() {
-    //não testado.
     CONSTANT_Integer_info result;
     readu4FromFile(&result.bytes, 1, arquivo);
     return result;
@@ -426,7 +415,6 @@ CONSTANT_Integer_info ClassFile::getConstantIntegerInfo() {
 
 
 CONSTANT_InterfaceMethodref_info ClassFile::getConstantInterfaceMethodRefInfo(){
-    // nao testado.
     CONSTANT_InterfaceMethodref_info result;
     readu2FromFile(&result.class_index, 1, arquivo);
     readu2FromFile(&result.name_and_type_index, 1, arquivo);
