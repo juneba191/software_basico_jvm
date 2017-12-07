@@ -693,7 +693,10 @@ operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::
 		operandStack->pop();
 		Types *arrayR = operandStack->top();
 		operandStack->pop();
+	
+				
 		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_LONG = *value->basicRef->T_LONG;
+	
 		int a = 0;
 	};
 	operations[0x51] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
@@ -740,7 +743,11 @@ operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::
 		operandStack->pop();
 		Types *arrayR = operandStack->top();
 		operandStack->pop();
-		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_BOOLEAN = *value->basicRef->T_BOOLEAN;
+		
+		if((*arrayR->arrayRef->array->at(*index->basicRef->T_INT)).tag == Types::BOOL)
+			*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_BOOLEAN = *value->basicRef->T_BOOLEAN;
+		else if((*arrayR->arrayRef->array->at(*index->basicRef->T_INT)).tag == Types::BYTE)
+			*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_BYTE = *value->basicRef->T_BYTE;
 	};
 	operations[0x55] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
 		// CASTORE
@@ -763,7 +770,7 @@ operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::
 		Types *arrayR = operandStack->top();
 		operandStack->pop();
 		Types *pequeno = new Types((char *)"S");
-		*pequeno->basicRef->T_SHORT = (u2)*value->basicRef->T_INT;
+		*pequeno->basicRef->T_SHORT = (u2)(*value->basicRef->T_INT);
 		*arrayR->arrayRef->array->at(*index->basicRef->T_INT)->basicRef->T_SHORT = *pequeno->basicRef->T_SHORT;
 	};	
 	operations[0x57] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::vector<Types *> *locals, Cp_Info *constant_pool, ClassInstance *thisClass) {
@@ -3276,8 +3283,7 @@ operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::
 		u4 counter = *value->basicRef->T_INT;
 		operandStack->pop();
 		(*pc)++;
-		std::string finalString = "[";
-		Types *tipo = new Types((char *)finalString.c_str());
+		Types *tipo = new Types((char *) "[");
 		Types *toAdd;
 		u1 atype = code[(*pc)++];
 		switch (atype)
@@ -3285,7 +3291,7 @@ operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::
 		case 4: //T_BOOLEAN
 			for (int i = 0; i < (int)counter; i++)
 			{
-				tipo->arrayRef->array->emplace_back(new Types((char *)"B"));
+				tipo->arrayRef->array->emplace_back(new Types((char *)"Z"));
 			}
 			break;
 
@@ -3314,7 +3320,7 @@ operations[0x00] = [](u1 *code, u4 *pc, std::stack<Types *> *operandStack, std::
 		case 8: //T_BYTE
 			for (int i = 0; i < (int)counter; i++)
 			{
-				tipo->arrayRef->array->emplace_back(new Types((char *)"Z"));
+				tipo->arrayRef->array->emplace_back(new Types((char *)"B"));
 			}
 			break;
 
@@ -3591,6 +3597,7 @@ Frame::Frame(ClassFile *cFile, Cp_Info *constantPool, ClassInstance *cInstance, 
 	}
 
 	locals.resize(codeAttribute->max_locals);
+	
 	for (int i = 0; i < cFile->field_count; i++)
 	{
 		locals[i] = new Types((char *)cFile->constant_pool[cFile->fields[i].descriptor_index - 1].info.utf8_info.bytes);

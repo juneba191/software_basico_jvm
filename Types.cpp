@@ -8,9 +8,7 @@ void CreateBasicType(Types* type, char descr);
 void CreateFieldVars(ClassInstance* cinstance);
 
 Types::Types(char* descr){
-	char abc[150];
-	strcpy(abc, descr);
-	std::string description(abc);
+	std::string description(descr);
 
 	//create type string
 	if (description == "STRING") {
@@ -36,9 +34,9 @@ Types::Types(char* descr){
 	//create a instance type
 	else if (descr[0] == 'L') {
 		tag = CLASSINSTANCE;
-		abc[strlen(abc) - 1] = 0;
+		descr[strlen(descr) - 1] = 0;
 		classInstance = (ClassInstance*)malloc(sizeof(ClassInstance));
-		classInstance->classDescription = Interpreter::GetInstance()->GetClass(abc + 1);
+		classInstance->classDescription = Interpreter::GetInstance()->GetClass(descr + 1);
 	}
 
 }
@@ -61,7 +59,7 @@ void CreateFieldVars(ClassInstance* cinstance) {
 		}
 		if(strcmp(superName, "java/lang/Object") != 0){
 			fieldToAdd = Interpreter::GetInstance()->GetClass(superName);
-			 superName = (char*)fieldToAdd->constant_pool[fieldToAdd->constant_pool[fieldToAdd->super_class - 1].info.class_info.name_index - 1].info.utf8_info.bytes;
+			superName = (char*)fieldToAdd->constant_pool[fieldToAdd->constant_pool[fieldToAdd->super_class - 1].info.class_info.name_index - 1].info.utf8_info.bytes;
 		}
 			
 	} while (strcmp(superName, "java/lang/Object"));
@@ -161,7 +159,6 @@ Types* copyTypes(Types* type) {
 		Cp_Info* cpool = type->classInstance->classDescription->constant_pool + type->classInstance->classDescription->this_class - 1;
 		while (cpool->tag != 1) {
 			cpool = type->classInstance->classDescription->constant_pool + cpool->info.class_info.name_index - 1;
-
 		}
 		aux += std::string((char*)cpool->info.utf8_info.bytes); 
 		tipo = new Types((char*)aux.c_str());
