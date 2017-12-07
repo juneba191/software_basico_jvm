@@ -9,10 +9,7 @@
 
 ClassFile::ClassFile(std::string nome) {
     this->nome = std::string(FilePath::GetInstance()->path+nome);
-    
-   Debug(FilePath::GetInstance()->path << nome);
     this->leClasse();
-    Debug("Classe lida com sucesso");
 }
 
 u1 readu1FromFile(u1* ptr,int count, std::ifstream &stream){

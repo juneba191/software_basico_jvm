@@ -43,9 +43,6 @@ void SoundManager::Pause(float tempo){
 
 void SoundManager::ExecuteMusic(int loop){
 
-	
-	while(loop){
-	
 	ExecuteNote("F", 1.5, 1);
 	ExecuteNote("G", 0.25, 1);
 	ExecuteNote("G#", 0.25, 1);
@@ -323,7 +320,7 @@ void SoundManager::ExecuteMusic(int loop){
 	ExecuteNote("C", 0.5, 2);
 	ExecuteNote("A#", 1, 1);
 	ExecuteNote("G#", 2, 1);
-}
+
 }
 
 

@@ -16,15 +16,14 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    string nome;
-	string modo;
+    string nome ;
+	string modo ;
 	
 	if (argc < 3){
-		cout << "Executar pelo terminal: diretorio\\classe.class -e / -l / -cruzeirohino / -cruzeirobeep\n";
+		cout << "Executar pelo terminal: diretorio\\classe.class -e / -l / -cruzeiro\n";
 		cout << "-e: interpreta a classe \n";
 		cout << "-l: imprime a classe no terminal \n";
-		cout << "-cruzeirohino: exibe a bandeira do cruzeiro e hino em wav\n";
-		cout << "-cruzeirobeep: exibe a bandeira do cruzeiro e hino em beep\n";
+		cout << "-cruzeiro: exibe a bandeira do cruzeiro e hino em beep\n";
 		exit(1);
 	} else {
 		nome = argv[1];
@@ -45,13 +44,13 @@ int main(int argc, char *argv[])
     	Interpreter::GetInstance()->AddClass(classFile);
     	Frame::SetUp();
     	Interpreter::GetInstance()->Run(classFile);
-	}else if(modo == "-cruzeirohino"){
+	}/*else if(modo == "-cruzeirohino"){
 		system("COLOR F1");
 		header();
 		
 		PlaySound(TEXT("song.wav"), NULL, SND_FILENAME | SND_SYNC);
 		
-	}else if(modo == "-cruzeirobeep"){
+	}*/else if(modo == "-cruzeiro"){
 		system("COLOR F1");
 		header();
 	
@@ -62,8 +61,7 @@ int main(int argc, char *argv[])
 		cout << "Parametro "<< modo <<" desconhecido.\n" << endl;
 		cout << "-e: interpreta a classe \n";
 		cout << "-l: imprime a classe no terminal \n";
-		cout << "-cruzeirohino: exibe a bandeira do cruzeiro e hino em wav\n";
-		cout << "-cruzeirobeep: exibe a bandeira do cruzeiro e hino em beep\n";
+		cout << "-cruzeiro: exibe a bandeira do cruzeiro e hino em beep\n";
 		
 		exit(1);
 	}
