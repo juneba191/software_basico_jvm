@@ -153,9 +153,10 @@ attribute_info ClassFile::carregarAtributos() {
     }else if (comparaIgual(this->constant_pool[result.attribute_name_index-1].info.utf8_info,"Deprecated")) {
         result.info.Deprecated_attribute_info = loadDeprecatedAttributeInfo();
     }else{
-        u1 unknown;
-        readu1FromFile(&unknown, result.attribute_length,arquivo);
-        std::cout << this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes << " Atributo Desconhecido\n";
+        u1* unknown = (u1*) malloc(sizeof(u1)* result.attribute_length);
+        this->arquivo.read((char*) unknown, result.attribute_length);
+        //readu1FromFile(unknown, result.attribute_length,arquivo);
+       // std::cout << this->constant_pool[result.attribute_name_index-1].info.utf8_info.bytes << " Atributo Desconhecido\n";
     }
     return result;
 }
